@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <title>Connector Tester</title>
+</head>
+<body>
+<div class="container-fluid">
+    <a href="/"><h1>Connector Tester</h1></a>
+    {% include 'connectionForm.twig' %}
+    <div class="row">
+        {% include 'connection_modal/connectionModal.twig' %}
+        <div class="col-6 my-2">
+            {% include 'resultWindows.twig' %}
+        </div>
+        <div class="col-6 my-2">
+            {% include 'payloadWindow.twig' %}
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

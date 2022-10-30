@@ -1,0 +1,31 @@
+<div class="row my-2">
+    <div class="col-10">
+        <div class="input-group mb-3">
+            <label for="connectorDropdown" class="input-group-text">Desc. | URL</label>
+            <select class="form-select" aria-label="Default select example" id="connectorDropdown">
+            </select>
+        </div>
+    </div>
+    <div class="col-2 text-end">
+        <div class="d-grid gap-2">
+            <button class="btn btn-block btn-primary" type="button" id="authenticate">
+                Authenticate
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-10">
+        <div class="input-group mb-3">
+            <label for="connectorDropdown" class="input-group-text">Token</label>
+            <input type="text" class="form-control" id="connectorToken" disabled>
+        </div>
+    </div>
+    <div class="col-2 text-end">
+        <div class="d-grid gap-2">
+            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#connectionsModal">
+                Connections
+            </button>
+        </div>
+    </div>
+</div>

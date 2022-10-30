@@ -1,0 +1,22 @@
+{
+  "name": "jtl/connector-tester",
+  "description": "The Jtl Connector Tester for the web",
+  "type": "project",
+  "require": {
+    "jtl/connector-client": "^1.1",
+    "ext-pdo": "*",
+    "twig/twig": "^3.4",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Jtl\\ConnectorTester\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Patrick Gugelsberger",
+      "email": "patrick.gugelsberger@jtl-software.com"
+    }
+  ]
+}
