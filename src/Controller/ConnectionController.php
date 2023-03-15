@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jtl\ConnectorTester\Controller;
 
 use Jtl\ConnectorTester\DatabaseConnection;
@@ -7,7 +9,6 @@ use Jtl\ConnectorTester\Model\ConnectionModel;
 
 class ConnectionController
 {
-
     protected \PDO $pdo;
 
     /**
@@ -16,7 +17,10 @@ class ConnectionController
     public function __construct()
     {
         $connection = new DatabaseConnection();
-        $this->pdo = $connection->connect();
+        $this->pdo  = $connection->connect();
+
+        $sql = "CREATE TABLE IF NOT EXISTS connections (name TEXT, url TEXT, token TEXT)";
+        $this->pdo->exec($sql);
     }
 
     /**
@@ -27,7 +31,7 @@ class ConnectionController
      */
     public function newConnection(?string $name, string $token, string $url): void
     {
-        $sql = sprintf("INSERT INTO connections (name, url, token) VALUES ('%s', '%s', '%s')", $name, $url, $token);
+        $sql = \sprintf("INSERT INTO connections (name, url, token) VALUES ('%s', '%s', '%s')", $name, $url, $token);
         $this->pdo->query($sql);
     }
 
@@ -37,8 +41,8 @@ class ConnectionController
      */
     public function fetchConnections(): array
     {
-        $sql = "SELECT * FROM connections";
-        $stmt = $this->pdo->query($sql);
+        $sql     = "SELECT * FROM connections";
+        $stmt    = $this->pdo->query($sql);
         $fetched = $stmt->fetchAll($this->pdo::FETCH_ASSOC);
         $results = [];
 
