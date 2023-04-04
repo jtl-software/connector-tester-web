@@ -10,8 +10,10 @@
                     <span>Connection saved!</span>
                 </div>
                 <div class="alert alert-danger alert-dismissible fade show" style="display: none" role="alert" id="failedToSave">
-                    <span>Connection couldn't be saved!</span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <span>Connection with this name already exists!</span>
+                </div>
+                <div class="alert alert-danger alert-dismissible fade show" style="display: none" role="alert" id="missingInput">
+                    <span>Please fill out all input fields.</span>
                 </div>
                 {% include 'connection_modal/addConnectionForm.twig' %}
             </div>

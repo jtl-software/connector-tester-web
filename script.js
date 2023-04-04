@@ -1,73 +1,90 @@
 $(document).ready(function () {
-    fetchConnections()
-    saveConnection()
-    buildActionDropDownOptions()
-    registerEvents()
+    if (localStorage.key(0) !== null) {
+        $('#deleteConnection').removeClass('d-none');
+    }
+    registerEvents();
 });
 
-function saveConnection()
-{
-    const saveAlert       = $('#savedSuccessfully');
+function saveConnectionToLocalStorage() {
+    const name = $('#newConnectionName').val();
+    const url = $('#newConnectionUrl').val();
+    const token = $('#newConnectionToken').val();
+    const saveAlert = $('#savedSuccessfully');
     const saveFailedAlert = $('#failedToSave');
-    $("#newConnectionForm").submit(function (event) {
-        event.preventDefault()
-        event.stopPropagation()
-        //If successful, display success alert else failure alert.
-        $.post('connectorConnections.php', $('#newConnectionForm').serialize(), function (data) {
-            if (data === 'saved') {
-                saveAlert.show().fadeOut(3000);
-                fetchConnections()
-            }
-        }).fail(function () {
-            saveFailedAlert.show().fadeOut(3000);
-        });
+    const missingInputAlert = $('#missingInput');
+    const deleteButton = $('#deleteConnection');
+
+    const keys = ['url', 'token'];
+    const values = [url, token];
+    const object = {};
+
+    for (let i = 0; i < keys.length; i++) {
+        object[keys[i]] = values[i];
+    }
+
+    if (localStorage.getItem(name) === null && name) {
+        localStorage.setItem(name, JSON.stringify(object));
+        saveAlert.show().fadeOut(3000);
+        buildConnectorDropDownOptions();
+        fillTokenField();
+        deleteButton.removeClass('d-none');
+
+    } else if (!name || !url || !token) {
+        missingInputAlert.show().fadeOut(3000);
+    } else {
+        saveFailedAlert.show().fadeOut(3000);
+    }
+}
+
+function deleteConnectionFromLocalStorage() {
+    const selectedConnection = $('#connectorDropdown :selected').attr('id');
+    const deleteButton = $('#deleteConnection');
+    const connectionDeletedAlert = $('#connectionDeleted');
+    const tokenField = $('#connectorToken');
+
+    localStorage.removeItem(selectedConnection);
+    buildConnectorDropDownOptions();
+    fillTokenField();
+    connectionDeletedAlert.show().fadeOut(3000);
+    if (localStorage.key(0) === null) {
+        deleteButton.addClass('d-none');
+        tokenField.val('');
+    }
+}
+
+function buildConnectorDropDownOptions() {
+    const connections = {...localStorage};
+    const connectorDropdown = $('#connectorDropdown');
+    connectorDropdown.empty();
+
+    $.each(connections, function (key, value) {
+        const values = JSON.parse(value);
+        connectorDropdown.append(`<option value="${values.url}" id="${key}">${key} | ${values.url}</option>`)
     })
 }
 
-function saveConnectionToLocalStorage()
-{
-    //TODO: implement save connection to localstorage method
-}
+function fillTokenField() {
+    const tokenField = $('#connectorToken');
+    const selectedConnector = $('#connectorDropdown');
+    const connections = {...localStorage};
+    const firstEntry = localStorage.key(0)
 
-function deleteConnectionFromLocalStorage()
-{
-    //TODO: implement delete connection from localstorage method
-}
+    if ( firstEntry !== null){
+        tokenField.val(JSON.parse(localStorage.getItem(firstEntry)).token);
+    }
 
-function fetchConnections()
-{
-    $.post('connectorConnections.php', {method: 'fetchConnections'}).done(function (data) {
-        //Build connection dropdown from fetched connections
-        const jsonData              = JSON.parse(data);
-        const alreadyCreatedOptions = $('#connectorDropdown option').map(function () {
-            return $(this).val()
-        }).get();
-        buildConnectorDropDownOptions(jsonData, alreadyCreatedOptions)
-        //Display token of currently selected connector
-        if (jsonData[0] !== undefined) {
-            $('#connectorToken').val(jsonData[0].token);
-        }
-        $('#connectorDropdown').change(function () {
-            const selected = $('#connectorDropdown :selected').val();
-            $.each(jsonData, function (key, value) {
-                if (selected === value.url) {
-                    $('#connectorToken').val(value.token)
-                }
-            })
+    selectedConnector.on('change', function () {
+        $.each(connections, function (key, value) {
+            const values = JSON.parse(value);
+            if (selectedConnector.val() === values.url) {
+                tokenField.val(values.token);
+            }
         })
     })
 }
 
-function buildConnectorDropDownOptions(jsonData, alreadyCreatedOptions)
-{
-    $.each(jsonData, function (key, value) {
-        if ($.inArray(value.url, alreadyCreatedOptions) === -1) {
-            $("#connectorDropdown").append(`<option value="${value.url}">${value.name} | ${value.url}</option>`)
-        }
-    })
-}
-function buildActionDropDownOptions()
-{
+
+function buildActionDropDownOptions() {
     const controllers = {
         category: ['Pull', 'Push', 'Delete', 'Stats'],
         connector: ['Finish', 'Identify'],
@@ -101,8 +118,11 @@ function buildActionDropDownOptions()
     })
 }
 
-function registerEvents()
-{
+function registerEvents() {
+    buildConnectorDropDownOptions();
+    buildActionDropDownOptions();
+    fillTokenField();
+
     $('#triggerAction').on('click', function (e) {
         const formData = $('#mainForm').serialize() + '&operation=triggerAction';
         $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
@@ -151,9 +171,14 @@ function registerEvents()
             fillResultWindow(response);
         })
     })
+    $('#submitNewConnection').on('click', function (e) {
+        saveConnectionToLocalStorage();
+    })
+    $('#deleteConnection').on('click', function (e) {
+        deleteConnectionFromLocalStorage();
+    })
 }
 
-function fillResultWindow(response)
-{
+function fillResultWindow(response) {
     $('#results').val(response);
 }

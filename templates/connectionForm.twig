@@ -1,3 +1,8 @@
+<div class="alert alert-danger alert-dismissible fade show text-center w-50 m-auto" style="display: none" role="alert"
+     id="connectionDeleted">
+    <span>Connection was deleted.</span>
+</div>
+
 <div class="row my-2">
     <div class="col-10">
         <div class="input-group mb-3">
@@ -6,9 +11,13 @@
             </select>
         </div>
     </div>
-    <div class="col-2 text-end">
-        <div class="d-grid gap-2">
-            <button class="btn btn-block btn-primary" type="button" name="operation" value="authenticate"
+    <div class="col-2 text-start">
+        <div class="gap-2">
+            <button class="btn btn-block btn-danger d-none" type="button" name="deleteConnection" value="deleteConnection"
+                    id="deleteConnection"><i class="bi bi-trash"></i>
+            </button>
+            <button class="btn btn-block btn-primary" type="button" name="operation"
+                    value="authenticate"
                     id="authenticate">
                 Authenticate
             </button>
