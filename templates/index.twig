@@ -12,20 +12,20 @@
 </head>
 <body>
 <div class="container-fluid">
-    <a href="/"><h1>Connector Tester</h1></a>
-    {% include 'connectionForm.twig' %}
-    <div class="row">
-        {% include 'connection_modal/connectionModal.twig' %}
-        <div class="col-6 my-2">
-            {% include 'resultWindows.twig' %}
+    {% include 'connection_modal/connectionModal.twig' %}
+    <h1 class="h1 text-primary">Connector Tester</h1>
+    <form action="../action.php" method="post" id="mainForm">
+        <div class="row">
+            {% include 'connectionForm.twig' %}
+            <div class="col-6 my-2">
+                {% include 'resultWindows.twig' %}
+            </div>
+            <div class="col-6 my-2">
+                {% include 'payloadWindow.twig' %}
+            </div>
         </div>
-        <div class="col-6 my-2">
-            {% include 'payloadWindow.twig' %}
-        </div>
-    </div>
-    <div class="row">
         {% include 'controls.twig' %}
-    </div>
+    </form>
 </div>
 <script src="script.js"></script>
 </body>

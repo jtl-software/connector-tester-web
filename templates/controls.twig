@@ -1,30 +1,63 @@
-<div class="col-6">
-    <div class="input-group">
-        <label for="controllerDropdown" class="input-group-text">Controller</label>
-        <select class="form-select" aria-label="Default select example" id="controllerDropdown">
-            <option value="category">Category</option>
-            <option value="connector">Connector</option>
-            <option value="core">Core</option>
-            <option value="crossSelling">Cross-Selling</option>
-            <option value="customer">Customer</option>
-            <option value="customerOrder">Customer Order</option>
-            <option value="deliveryNote">Delivery Note</option>
-            <option value="globalData">Global Data</option>
-            <option value="image">Image</option>
-            <option value="manufacturer">Manufacturer</option>
-            <option value="payment">Payment</option>
-            <option value="product">Product</option>
-            <option value="productPrice">Product Price</option>
-            <option value="productStockLevel">Product Stock Level</option>
-            <option value="specific">Specific</option>
-            <option value="statusChange">Status Change</option>
-        </select>
+<div class="row mb-2">
+    <div class="col-6">
+        <div class="input-group">
+            <label for="controllerDropdown" class="input-group-text">Controller</label>
+            <select class="form-select" id="controllerDropdown" name="controller">
+                <option value="category">Category</option>
+                <option value="connector">Connector</option>
+                <option value="core">Core</option>
+                <option value="crossSelling">Cross-Selling</option>
+                <option value="customer">Customer</option>
+                <option value="customerOrder">Customer Order</option>
+                <option value="deliveryNote">Delivery Note</option>
+                <option value="globalData">Global Data</option>
+                <option value="image">Image</option>
+                <option value="manufacturer">Manufacturer</option>
+                <option value="payment">Payment</option>
+                <option value="product">Product</option>
+                <option value="productPrice">Product Price</option>
+                <option value="productStockLevel">Product Stock Level</option>
+                <option value="specific">Specific</option>
+                <option value="statusChange">Status Change</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="input-group">
+            <label for="actionDropdown" class="input-group-text">Action</label>
+            <select class="form-select" id="actionDropdown" name="action">
+            </select>
+        </div>
     </div>
 </div>
-<div class="col-6">
-    <div class="input-group">
-        <label for="actionDropdown" class="input-group-text">Action</label>
-        <select class="form-select" aria-label="Default select example" id="actionDropdown">
-        </select>
+<div class="row mb-2">
+    <div class="col-6">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" id="triggerAck">Trigger Ack</button>
+            <button type="button" class="btn btn-primary ms-1" name="operation" value="clearLinkings"
+                    id="clearLinkings">Clear Linkings
+            </button>
+            <button type="button" class="btn btn-primary ms-1" name="operation" value="fromJson" id="fromJson">from
+                json
+            </button>
+            <button type="button" class="btn btn-primary ms-1" name="operation" value="getSkeleton"
+                    id="getSkeleton">Get Skeleton
+            </button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" name="operation" value="pushTest" id="pushTest">Push
+                Test
+            </button>
+            <button type="button" class="btn btn-primary ms-1" name="operation" value="modelPush" id="modelPush">
+                Model Push
+            </button>
+            <button type="button" class="btn btn-primary ms-1" name="operation" value="triggerAction"
+                    id="triggerAction">Trigger Action
+            </button>
+        </div>
     </div>
 </div>

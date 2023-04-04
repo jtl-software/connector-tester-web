@@ -31,7 +31,12 @@ class ConnectionController
      */
     public function newConnection(?string $name, string $token, string $url): void
     {
-        $sql = \sprintf("INSERT INTO connections (name, url, token) VALUES ('%s', '%s', '%s')", $name, $url, $token);
+        $sql = \sprintf(
+            "INSERT INTO connections (name, url, token) VALUES ('%s', '%s', '%s')",
+            $name,
+            $url,
+            $token
+        );
         $this->pdo->query($sql);
     }
 

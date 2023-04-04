@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 require_once 'vendor/autoload.php';
 
 use Jtl\ConnectorTester\Controller\ConnectionController;
 
-$name = $_POST['newConnectionName'] ?? null;
-$url = $_POST['newConnectionUrl'];
+$name  = $_POST['newConnectionName'] ?? null;
+$url   = $_POST['newConnectionUrl'];
 $token = $_POST['newConnectionToken'];
 
 $connectionController = new ConnectionController();
