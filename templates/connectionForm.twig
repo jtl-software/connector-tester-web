@@ -12,12 +12,12 @@
         </div>
     </div>
     <div class="col-2 text-start">
-        <div class="gap-2">
-            <button class="btn btn-block btn-danger d-none" type="button" name="deleteConnection" value="deleteConnection"
+        <div class="">
+            <button class="btn btn-danger d-none" type="button" name="deleteConnection" value="deleteConnection"
                     id="deleteConnection"><i class="bi bi-trash"></i>
             </button>
-            <button class="btn btn-block btn-primary" type="button" name="operation"
-                    value="authenticate"
+            <button class="btn btn-primary" disabled type="button" name="operation"
+                    value="notAuthenticated"
                     id="authenticate">
                 Authenticate
             </button>
@@ -31,9 +31,9 @@
             <input readonly="readonly" type="text" class="form-control" name="connectorToken" id="connectorToken">
         </div>
     </div>
-    <div class="col-2 text-end">
-        <div class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#connectionsModal">
+    <div class="col-2 text-start">
+        <div class="">
+            <button class="btn btn-block btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#connectionsModal">
                 Add Connection
             </button>
         </div>

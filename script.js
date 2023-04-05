@@ -1,7 +1,4 @@
 $(document).ready(function () {
-    if (localStorage.key(0) !== null) {
-        $('#deleteConnection').removeClass('d-none');
-    }
     registerEvents();
 });
 
@@ -34,22 +31,22 @@ function saveConnectionToLocalStorage() {
     } else {
         saveFailedAlert.show().fadeOut(3000);
     }
+
+    handleDeleteConnectionButton();
+    handleAuthentication();
 }
 
 function deleteConnectionFromLocalStorage() {
     const selectedConnection = $('#connectorDropdown :selected').attr('id');
-    const deleteButton = $('#deleteConnection');
     const connectionDeletedAlert = $('#connectionDeleted');
-    const tokenField = $('#connectorToken');
 
     localStorage.removeItem(selectedConnection);
     buildConnectorDropDownOptions();
     fillTokenField();
     connectionDeletedAlert.show().fadeOut(3000);
-    if (localStorage.key(0) === null) {
-        deleteButton.addClass('d-none');
-        tokenField.val('');
-    }
+
+    handleDeleteConnectionButton();
+    handleAuthentication(true);
 }
 
 function buildConnectorDropDownOptions() {
@@ -69,7 +66,7 @@ function fillTokenField() {
     const connections = {...localStorage};
     const firstEntry = localStorage.key(0)
 
-    if ( firstEntry !== null){
+    if (firstEntry !== null) {
         tokenField.val(JSON.parse(localStorage.getItem(firstEntry)).token);
     }
 
@@ -118,67 +115,110 @@ function buildActionDropDownOptions() {
     })
 }
 
-function registerEvents() {
-    buildConnectorDropDownOptions();
-    buildActionDropDownOptions();
-    fillTokenField();
+function handleDeleteConnectionButton() {
+    const deleteButton = $('#deleteConnection');
+    const tokenField = $('#connectorToken');
 
-    $('#triggerAction').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=triggerAction';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#triggerAck').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=triggerAck';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#clearLinkings').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=clearLinkings';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#fromJson').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=fromJson';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#getSkeleton').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=getSkeleton';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#pushTest').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=pushTest';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#modelPush').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=modelPush';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#authenticate').on('click', function (e) {
-        const formData = $('#mainForm').serialize() + '&operation=authenticate';
-        $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
-            fillResultWindow(response);
-        })
-    })
-    $('#submitNewConnection').on('click', function (e) {
-        saveConnectionToLocalStorage();
-    })
-    $('#deleteConnection').on('click', function (e) {
-        deleteConnectionFromLocalStorage();
-    })
+    if (localStorage.key(0) === null) {
+        deleteButton.addClass('d-none');
+        tokenField.val('');
+    } else {
+        deleteButton.removeClass('d-none');
+    }
 }
 
 function fillResultWindow(response) {
     $('#results').val(response);
+}
+
+function handleControls(disableButton) {
+    const controls = $('#controls :input');
+    const connector = $('#connectorDropdown');
+
+    if (!disableButton) {
+        controls.attr('disabled', false);
+        connector.attr('disabled', true);
+    } else if (disableButton) {
+        controls.attr('disabled', true);
+        connector.attr('disabled', false);
+    }
+}
+
+function handleAuthentication(disableButton = null) {
+    const button = $('#authenticate');
+    const results = $('#results');
+
+    localStorage.key(0) === null ? button.attr('disabled', true) : button.attr('disabled', false);
+
+    if (disableButton === false) {
+        button.val('authenticated');
+        button.text('Disconnect');
+        handleControls(false);
+    } else if (disableButton === true) {
+        button.val('notAuthenticated');
+        button.text('Authenticate');
+        results.val('');
+        handleControls(true);
+    }
+}
+
+function submitForm(target) {
+    const connector = $('#connectorDropdown');
+    connector.attr('disabled', false);
+
+    const formData = $('#mainForm').serialize() + '&operation=' + target;
+
+    $.post('action.php?XDEBUG_SESSION_START=PHPSTORM', formData, function (response) {
+        fillResultWindow(response);
+    })
+
+    connector.attr('disabled', true);
+}
+
+function registerEvents() {
+    buildConnectorDropDownOptions();
+    buildActionDropDownOptions();
+    fillTokenField();
+    handleDeleteConnectionButton();
+    handleAuthentication();
+
+    $('#triggerAction').on('click', function () {
+        submitForm('triggerAction');
+    })
+    $('#triggerAck').on('click', function () {
+        submitForm('triggerAck');
+    })
+    $('#clearLinkings').on('click', function () {
+        submitForm('clearLinkings');
+    })
+    $('#fromJson').on('click', function () {
+        submitForm('fromJson');
+    })
+    $('#getSkeleton').on('click', function () {
+        submitForm('getSkeleton');
+    })
+    $('#pushTest').on('click', function () {
+        submitForm('pushTest');
+    })
+    $('#modelPush').on('click', function () {
+        submitForm('modelPush');
+    })
+    $('#authenticate').on('click', function () {
+        const button = $('#authenticate');
+
+        if (button.val() === 'notAuthenticated') {
+            submitForm('authenticate');
+            handleAuthentication(false);
+        } else {
+            handleAuthentication(true);
+        }
+    })
+
+    $('#submitNewConnection').on('click', function () {
+        saveConnectionToLocalStorage();
+    })
+
+    $('#deleteConnection').on('click', function () {
+        deleteConnectionFromLocalStorage();
+    })
 }
