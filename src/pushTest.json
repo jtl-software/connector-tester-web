@@ -1,0 +1,1264 @@
+[
+  {
+    "method": "core.connector.features",
+    "params": null,
+    "jtlrpc": "2.0",
+    "id": "0bb6e7e56217436eb510f8cee19f2201"
+  },
+  {
+    "method": "manufacturer.push",
+    "params": [
+      {
+        "id": [
+          "",
+          1
+        ],
+        "name": "Apple",
+        "sort": 0,
+        "urlPath": "",
+        "websiteUrl": "",
+        "i18ns": [
+          {
+            "manufacturerId": [
+              "",
+              1
+            ],
+            "description": "Apple Inc",
+            "languageISO": "ger",
+            "metaDescription": "",
+            "metaKeywords": "",
+            "titleTag": ""
+          }
+        ]
+      }
+    ],
+    "jtlrpc": "2.0",
+    "id": "53f53d897b62400bb97144e59bcbbf4b"
+  },
+  {
+    "method": "category.push",
+    "params": [
+      {
+        "id": [
+          "",
+          1
+        ],
+        "parentCategoryId": [
+          "",
+          0
+        ],
+        "isActive": true,
+        "level": 0,
+        "sort": 0,
+        "attributes": [
+          {
+            "categoryId": [
+              "",
+              1
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "isCustomProperty": false,
+            "isTranslated": false,
+            "i18ns": [
+              {
+                "categoryAttrId": [
+                  "",
+                  1
+                ],
+                "languageISO": "ger",
+                "name": "attribute1",
+                "value": "Hallo Frank"
+              }
+            ]
+          },
+          {
+            "categoryId": [
+              "",
+              1
+            ],
+            "id": [
+              "",
+              2
+            ],
+            "isCustomProperty": false,
+            "isTranslated": false,
+            "i18ns": [
+              {
+                "categoryAttrId": [
+                  "",
+                  2
+                ],
+                "languageISO": "ger",
+                "name": "attribute2",
+                "value": "Dies ist ein Test"
+              }
+            ]
+          }
+        ],
+        "customerGroups": [],
+        "i18ns": [
+          {
+            "categoryId": [
+              "",
+              1
+            ],
+            "description": "",
+            "languageISO": "ger",
+            "metaDescription": "",
+            "metaKeywords": "",
+            "name": "Hardware",
+            "titleTag": "",
+            "urlPath": ""
+          }
+        ],
+        "invisibilities": []
+      },
+      {
+        "id": [
+          "",
+          2
+        ],
+        "parentCategoryId": [
+          "",
+          1
+        ],
+        "isActive": true,
+        "level": 1,
+        "sort": 0,
+        "attributes": [],
+        "customerGroups": [],
+        "i18ns": [
+          {
+            "categoryId": [
+              "",
+              2
+            ],
+            "description": "",
+            "languageISO": "ger",
+            "metaDescription": "",
+            "metaKeywords": "",
+            "name": "Apple",
+            "titleTag": "",
+            "urlPath": ""
+          }
+        ],
+        "invisibilities": []
+      }
+    ],
+    "jtlrpc": "2.0",
+    "id": "7bbb73486fa847479ca9db099aab252b"
+  },
+  {
+    "method": "product.push",
+    "params": [
+      {
+        "basePriceUnitId": [
+          "",
+          0
+        ],
+        "id": [
+          "",
+          4
+        ],
+        "manufacturerId": [
+          "",
+          1
+        ],
+        "masterProductId": [
+          "",
+          0
+        ],
+        "measurementUnitId": [
+          "",
+          0
+        ],
+        "partsListId": [
+          "",
+          0
+        ],
+        "productTypeId": [
+          "",
+          0
+        ],
+        "shippingClassId": [
+          "",
+          0
+        ],
+        "unitId": [
+          "",
+          1
+        ],
+        "asin": "",
+        "availableFrom": "0001-01-01T00:00:00+01:00",
+        "basePriceDivisor": 0.0,
+        "basePriceFactor": 0.0,
+        "basePriceQuantity": 0.0,
+        "basePriceUnitCode": null,
+        "basePriceUnitName": null,
+        "considerBasePrice": false,
+        "considerStock": true,
+        "considerVariationStock": false,
+        "creationDate": "2015-01-19T00:00:00+01:00",
+        "ean": "",
+        "epid": "",
+        "hazardIdNumber": "",
+        "height": 0.0,
+        "isActive": true,
+        "isBatch": false,
+        "isBestBefore": false,
+        "isbn": "",
+        "isDivisible": false,
+        "isMasterProduct": false,
+        "isNewProduct": false,
+        "isSerialNumber": false,
+        "isTopProduct": false,
+        "keywords": "",
+        "length": 0.0,
+        "manufacturerNumber": "",
+        "measurementQuantity": 0.0,
+        "measurementUnitCode": null,
+        "minBestBeforeDate": null,
+        "minimumOrderQuantity": 0.0,
+        "minimumQuantity": 0.0,
+        "modified": null,
+        "nextAvailableInflowDate": null,
+        "nextAvailableInflowQuantity": 0.0,
+        "note": "",
+        "originCountry": "",
+        "packagingQuantity": 0.0,
+        "permitNegativeStock": true,
+        "productWeight": 0.0,
+        "purchasePrice": 0.0,
+        "recommendedRetailPrice": 0.0,
+        "serialNumber": "",
+        "shippingWeight": 0.0,
+        "sku": "002",
+        "sort": 0,
+        "stockLevel": {
+          "productId": [
+            "",
+            4
+          ],
+          "stockLevel": 5.0
+        },
+        "supplierDeliveryTime": 0,
+        "supplierStockLevel": 0.0,
+        "taric": "",
+        "unNumber": "",
+        "upc": "",
+        "vat": 19.0,
+        "width": 0.0,
+        "categories": [
+          {
+            "categoryId": [
+              "",
+              2
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              4
+            ]
+          }
+        ],
+        "configGroups": [],
+        "fileDownloads": [],
+        "i18ns": [
+          {
+            "productId": [
+              "",
+              4
+            ],
+            "deliveryStatus": null,
+            "description": "",
+            "languageISO": "ger",
+            "measurementUnitName": null,
+            "metaDescription": "",
+            "metaKeywords": "",
+            "name": "iPhone Ladekabel",
+            "shortDescription": "",
+            "titleTag": "",
+            "unitName": null,
+            "urlPath": ""
+          }
+        ],
+        "invisibilities": [],
+        "mediaFiles": [],
+        "prices": [
+          {
+            "customerGroupId": [
+              "",
+              0
+            ],
+            "customerId": [
+              "",
+              0
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              4
+            ],
+            "items": [
+              {
+                "productPriceId": [
+                  "",
+                  1
+                ],
+                "netPrice": 29.0,
+                "quantity": 0
+              }
+            ]
+          }
+        ],
+        "partsLists": [],
+        "attributes": [],
+        "specialPrices": [],
+        "specifics": [],
+        "warehouseInfo": [],
+        "variations": [],
+        "checksums": [],
+        "varCombinations": [],
+        "customerGroupPackagingQuantities": null
+      },
+      {
+        "basePriceUnitId": [
+          "",
+          0
+        ],
+        "id": [
+          "",
+          1
+        ],
+        "manufacturerId": [
+          "",
+          1
+        ],
+        "masterProductId": [
+          "",
+          0
+        ],
+        "measurementUnitId": [
+          "",
+          0
+        ],
+        "partsListId": [
+          "",
+          0
+        ],
+        "productTypeId": [
+          "",
+          0
+        ],
+        "shippingClassId": [
+          "",
+          0
+        ],
+        "unitId": [
+          "",
+          1
+        ],
+        "asin": "",
+        "availableFrom": "0001-01-01T00:00:00+01:00",
+        "basePriceDivisor": 0.0,
+        "basePriceFactor": 0.0,
+        "basePriceQuantity": 0.0,
+        "basePriceUnitCode": null,
+        "basePriceUnitName": null,
+        "considerBasePrice": false,
+        "considerStock": true,
+        "considerVariationStock": false,
+        "creationDate": "2015-01-19T00:00:00+01:00",
+        "ean": "",
+        "epid": "",
+        "hazardIdNumber": "",
+        "height": 0.0,
+        "isActive": true,
+        "isBatch": false,
+        "isBestBefore": false,
+        "isbn": "",
+        "isDivisible": false,
+        "isMasterProduct": true,
+        "isNewProduct": false,
+        "isSerialNumber": false,
+        "isTopProduct": false,
+        "keywords": "",
+        "length": 0.0,
+        "manufacturerNumber": "",
+        "measurementQuantity": 0.0,
+        "measurementUnitCode": null,
+        "minBestBeforeDate": null,
+        "minimumOrderQuantity": 0.0,
+        "minimumQuantity": 0.0,
+        "modified": null,
+        "nextAvailableInflowDate": null,
+        "nextAvailableInflowQuantity": 0.0,
+        "note": "",
+        "originCountry": "",
+        "packagingQuantity": 0.0,
+        "permitNegativeStock": true,
+        "productWeight": 0.0,
+        "purchasePrice": 0.0,
+        "recommendedRetailPrice": 0.0,
+        "serialNumber": "",
+        "shippingWeight": 0.0,
+        "sku": "001",
+        "sort": 0,
+        "stockLevel": {
+          "productId": [
+            "",
+            1
+          ],
+          "stockLevel": 5.0
+        },
+        "supplierDeliveryTime": 0,
+        "supplierStockLevel": 0.0,
+        "taric": "",
+        "unNumber": "",
+        "upc": "",
+        "vat": 19.0,
+        "width": 0.0,
+        "categories": [
+          {
+            "categoryId": [
+              "",
+              2
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              1
+            ]
+          }
+        ],
+        "configGroups": [],
+        "fileDownloads": [],
+        "i18ns": [
+          {
+            "productId": [
+              "",
+              1
+            ],
+            "deliveryStatus": null,
+            "description": "",
+            "languageISO": "ger",
+            "measurementUnitName": null,
+            "metaDescription": "",
+            "metaKeywords": "",
+            "name": "iPhone 6",
+            "shortDescription": "",
+            "titleTag": "",
+            "unitName": null,
+            "urlPath": ""
+          }
+        ],
+        "invisibilities": [],
+        "mediaFiles": [],
+        "prices": [
+          {
+            "customerGroupId": [
+              "",
+              0
+            ],
+            "customerId": [
+              "",
+              0
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              1
+            ],
+            "items": [
+              {
+                "productPriceId": [
+                  "",
+                  1
+                ],
+                "netPrice": 587.39495798319,
+                "quantity": 0
+              }
+            ]
+          }
+        ],
+        "partsLists": [],
+        "attributes": [],
+        "specialPrices": [],
+        "specifics": [],
+        "warehouseInfo": [],
+        "variations": [
+          {
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              1
+            ],
+            "sort": 1,
+            "type": null,
+            "i18ns": [
+              {
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "languageISO": "ger",
+                "name": "Farbe"
+              }
+            ],
+            "invisibilities": [],
+            "values": [
+              {
+                "id": [
+                  "",
+                  1
+                ],
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      1
+                    ],
+                    "languageISO": "ger",
+                    "name": "Spacegrau"
+                  }
+                ],
+                "invisibilities": []
+              },
+              {
+                "id": [
+                  "",
+                  2
+                ],
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      2
+                    ],
+                    "languageISO": "ger",
+                    "name": "Gold"
+                  }
+                ],
+                "invisibilities": []
+              }
+            ]
+          },
+          {
+            "id": [
+              "",
+              2
+            ],
+            "productId": [
+              "",
+              1
+            ],
+            "sort": 1,
+            "type": null,
+            "i18ns": [
+              {
+                "productVariationId": [
+                  "",
+                  2
+                ],
+                "languageISO": "ger",
+                "name": "Speicherplatz"
+              }
+            ],
+            "invisibilities": [],
+            "values": [
+              {
+                "id": [
+                  "",
+                  3
+                ],
+                "productVariationId": [
+                  "",
+                  2
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      3
+                    ],
+                    "languageISO": "ger",
+                    "name": "32 GB"
+                  }
+                ],
+                "invisibilities": []
+              }
+            ]
+          }
+        ],
+        "checksums": [],
+        "varCombinations": [
+          {
+            "productId": [
+              "",
+              2
+            ],
+            "productVariationId": [
+              "",
+              1
+            ],
+            "productVariationValueId": [
+              "",
+              2
+            ]
+          },
+          {
+            "productId": [
+              "",
+              2
+            ],
+            "productVariationId": [
+              "",
+              2
+            ],
+            "productVariationValueId": [
+              "",
+              3
+            ]
+          },
+          {
+            "productId": [
+              "",
+              3
+            ],
+            "productVariationId": [
+              "",
+              1
+            ],
+            "productVariationValueId": [
+              "",
+              1
+            ]
+          },
+          {
+            "productId": [
+              "",
+              3
+            ],
+            "productVariationId": [
+              "",
+              2
+            ],
+            "productVariationValueId": [
+              "",
+              3
+            ]
+          }
+        ],
+        "customerGroupPackagingQuantities": null
+      },
+      {
+        "basePriceUnitId": [
+          "",
+          0
+        ],
+        "id": [
+          "",
+          2
+        ],
+        "manufacturerId": [
+          "",
+          1
+        ],
+        "masterProductId": [
+          "",
+          1
+        ],
+        "measurementUnitId": [
+          "",
+          0
+        ],
+        "partsListId": [
+          "",
+          0
+        ],
+        "productTypeId": [
+          "",
+          0
+        ],
+        "shippingClassId": [
+          "",
+          0
+        ],
+        "unitId": [
+          "",
+          1
+        ],
+        "asin": "",
+        "availableFrom": "0001-01-01T00:00:00+01:00",
+        "basePriceDivisor": 0.0,
+        "basePriceFactor": 0.0,
+        "basePriceQuantity": 0.0,
+        "basePriceUnitCode": null,
+        "basePriceUnitName": null,
+        "considerBasePrice": false,
+        "considerStock": true,
+        "considerVariationStock": false,
+        "creationDate": "2015-01-19T00:00:00+01:00",
+        "ean": "",
+        "epid": "",
+        "hazardIdNumber": "",
+        "height": 0.0,
+        "isActive": true,
+        "isBatch": false,
+        "isBestBefore": false,
+        "isbn": "",
+        "isDivisible": false,
+        "isMasterProduct": false,
+        "isNewProduct": false,
+        "isSerialNumber": false,
+        "isTopProduct": false,
+        "keywords": "",
+        "length": 0.0,
+        "manufacturerNumber": "",
+        "measurementQuantity": 0.0,
+        "measurementUnitCode": null,
+        "minBestBeforeDate": null,
+        "minimumOrderQuantity": 0.0,
+        "minimumQuantity": 0.0,
+        "modified": null,
+        "nextAvailableInflowDate": null,
+        "nextAvailableInflowQuantity": 0.0,
+        "note": "",
+        "originCountry": "",
+        "packagingQuantity": 0.0,
+        "permitNegativeStock": true,
+        "productWeight": 0.0,
+        "purchasePrice": 0.0,
+        "recommendedRetailPrice": 0.0,
+        "serialNumber": "",
+        "shippingWeight": 0.0,
+        "sku": "001-1",
+        "sort": 0,
+        "stockLevel": {
+          "productId": [
+            "",
+            2
+          ],
+          "stockLevel": 5.0
+        },
+        "supplierDeliveryTime": 0,
+        "supplierStockLevel": 0.0,
+        "taric": "",
+        "unNumber": "",
+        "upc": "",
+        "vat": 19.0,
+        "width": 0.0,
+        "categories": [
+          {
+            "categoryId": [
+              "",
+              2
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              2
+            ]
+          }
+        ],
+        "configGroups": [],
+        "fileDownloads": [],
+        "i18ns": [
+          {
+            "productId": [
+              "",
+              2
+            ],
+            "deliveryStatus": null,
+            "description": "",
+            "languageISO": "ger",
+            "measurementUnitName": null,
+            "metaDescription": "",
+            "metaKeywords": "",
+            "name": "iPhone 6",
+            "shortDescription": "",
+            "titleTag": "",
+            "unitName": null,
+            "urlPath": ""
+          }
+        ],
+        "invisibilities": [],
+        "mediaFiles": [],
+        "prices": [
+          {
+            "customerGroupId": [
+              "",
+              0
+            ],
+            "customerId": [
+              "",
+              0
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              2
+            ],
+            "items": [
+              {
+                "productPriceId": [
+                  "",
+                  1
+                ],
+                "netPrice": 587.39495798319,
+                "quantity": 0
+              }
+            ]
+          }
+        ],
+        "partsLists": [],
+        "attributes": [],
+        "specialPrices": [],
+        "specifics": [],
+        "warehouseInfo": [],
+        "variations": [
+          {
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              2
+            ],
+            "sort": 1,
+            "type": null,
+            "i18ns": [
+              {
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "languageISO": "ger",
+                "name": "Farbe"
+              }
+            ],
+            "invisibilities": [],
+            "values": [
+              {
+                "id": [
+                  "",
+                  2
+                ],
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      2
+                    ],
+                    "languageISO": "ger",
+                    "name": "Gold"
+                  }
+                ],
+                "invisibilities": []
+              }
+            ]
+          },
+          {
+            "id": [
+              "",
+              2
+            ],
+            "productId": [
+              "",
+              2
+            ],
+            "sort": 1,
+            "type": null,
+            "i18ns": [
+              {
+                "productVariationId": [
+                  "",
+                  2
+                ],
+                "languageISO": "ger",
+                "name": "Speicherplatz"
+              }
+            ],
+            "invisibilities": [],
+            "values": [
+              {
+                "id": [
+                  "",
+                  3
+                ],
+                "productVariationId": [
+                  "",
+                  2
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      3
+                    ],
+                    "languageISO": "ger",
+                    "name": "32 GB"
+                  }
+                ],
+                "invisibilities": []
+              }
+            ]
+          }
+        ],
+        "checksums": [],
+        "varCombinations": [],
+        "customerGroupPackagingQuantities": null
+      },
+      {
+        "basePriceUnitId": [
+          "",
+          0
+        ],
+        "id": [
+          "",
+          3
+        ],
+        "manufacturerId": [
+          "",
+          1
+        ],
+        "masterProductId": [
+          "",
+          1
+        ],
+        "measurementUnitId": [
+          "",
+          0
+        ],
+        "partsListId": [
+          "",
+          0
+        ],
+        "productTypeId": [
+          "",
+          0
+        ],
+        "shippingClassId": [
+          "",
+          0
+        ],
+        "unitId": [
+          "",
+          1
+        ],
+        "asin": "",
+        "availableFrom": "0001-01-01T00:00:00+01:00",
+        "basePriceDivisor": 0.0,
+        "basePriceFactor": 0.0,
+        "basePriceQuantity": 0.0,
+        "basePriceUnitCode": null,
+        "basePriceUnitName": null,
+        "considerBasePrice": false,
+        "considerStock": true,
+        "considerVariationStock": false,
+        "creationDate": "2015-01-19T00:00:00+01:00",
+        "ean": "",
+        "epid": "",
+        "hazardIdNumber": "",
+        "height": 0.0,
+        "isActive": true,
+        "isBatch": false,
+        "isBestBefore": false,
+        "isbn": "",
+        "isDivisible": false,
+        "isMasterProduct": false,
+        "isNewProduct": false,
+        "isSerialNumber": false,
+        "isTopProduct": false,
+        "keywords": "",
+        "length": 0.0,
+        "manufacturerNumber": "",
+        "measurementQuantity": 0.0,
+        "measurementUnitCode": null,
+        "minBestBeforeDate": null,
+        "minimumOrderQuantity": 0.0,
+        "minimumQuantity": 0.0,
+        "modified": null,
+        "nextAvailableInflowDate": null,
+        "nextAvailableInflowQuantity": 0.0,
+        "note": "",
+        "originCountry": "",
+        "packagingQuantity": 0.0,
+        "permitNegativeStock": true,
+        "productWeight": 0.0,
+        "purchasePrice": 0.0,
+        "recommendedRetailPrice": 0.0,
+        "serialNumber": "",
+        "shippingWeight": 0.0,
+        "sku": "001-2",
+        "sort": 0,
+        "stockLevel": {
+          "productId": [
+            "",
+            3
+          ],
+          "stockLevel": 10.0
+        },
+        "supplierDeliveryTime": 0,
+        "supplierStockLevel": 0.0,
+        "taric": "",
+        "unNumber": "",
+        "upc": "",
+        "vat": 19.0,
+        "width": 0.0,
+        "categories": [
+          {
+            "categoryId": [
+              "",
+              2
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              3
+            ]
+          }
+        ],
+        "configGroups": [],
+        "fileDownloads": [],
+        "i18ns": [
+          {
+            "productId": [
+              "",
+              3
+            ],
+            "deliveryStatus": null,
+            "description": "",
+            "languageISO": "ger",
+            "measurementUnitName": null,
+            "metaDescription": "",
+            "metaKeywords": "",
+            "name": "iPhone 6",
+            "shortDescription": "",
+            "titleTag": "",
+            "unitName": null,
+            "urlPath": ""
+          }
+        ],
+        "invisibilities": [],
+        "mediaFiles": [],
+        "prices": [
+          {
+            "customerGroupId": [
+              "",
+              0
+            ],
+            "customerId": [
+              "",
+              0
+            ],
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              3
+            ],
+            "items": [
+              {
+                "productPriceId": [
+                  "",
+                  1
+                ],
+                "netPrice": 282.69,
+                "quantity": 0
+              }
+            ]
+          }
+        ],
+        "partsLists": [],
+        "attributes": [],
+        "specialPrices": [],
+        "specifics": [],
+        "warehouseInfo": [],
+        "variations": [
+          {
+            "id": [
+              "",
+              1
+            ],
+            "productId": [
+              "",
+              3
+            ],
+            "sort": 1,
+            "type": null,
+            "i18ns": [
+              {
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "languageISO": "ger",
+                "name": "Farbe"
+              }
+            ],
+            "invisibilities": [],
+            "values": [
+              {
+                "id": [
+                  "",
+                  1
+                ],
+                "productVariationId": [
+                  "",
+                  1
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      1
+                    ],
+                    "languageISO": "ger",
+                    "name": "Spacegrau"
+                  }
+                ],
+                "invisibilities": []
+              }
+            ]
+          },
+          {
+            "id": [
+              "",
+              2
+            ],
+            "productId": [
+              "",
+              3
+            ],
+            "sort": 1,
+            "type": null,
+            "i18ns": [
+              {
+                "productVariationId": [
+                  "",
+                  2
+                ],
+                "languageISO": "ger",
+                "name": "Speicherplatz"
+              }
+            ],
+            "invisibilities": [],
+            "values": [
+              {
+                "id": [
+                  "",
+                  3
+                ],
+                "productVariationId": [
+                  "",
+                  2
+                ],
+                "ean": null,
+                "extraWeight": 0.0,
+                "sku": "",
+                "sort": 0,
+                "stockLevel": 0.0,
+                "extraCharges": [],
+                "i18ns": [
+                  {
+                    "productVariationValueId": [
+                      "",
+                      3
+                    ],
+                    "languageISO": "ger",
+                    "name": "32 GB"
+                  }
+                ],
+                "invisibilities": []
+              }
+            ]
+          }
+        ],
+        "checksums": [],
+        "varCombinations": [],
+        "customerGroupPackagingQuantities": null
+      }
+    ],
+    "jtlrpc": "2.0",
+    "id": "61becaeb77b04f6da9d2ee47694f3032"
+  }
+]

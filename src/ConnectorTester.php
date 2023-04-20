@@ -76,7 +76,7 @@ class ConnectorTester extends ConnectorClient
                     $response = $this->finish();
                     break;
                 case self::ACTION_ACK:
-                    $response = $this->Ack();
+                    $response = $this->triggerAck();
                     break;
                 case self::ACTION_INIT:
                     $response = $this->request(RpcMethod::INIT);
@@ -89,6 +89,19 @@ class ConnectorTester extends ConnectorClient
         }
 
         return \json_encode($response, \JSON_PRETTY_PRINT);
+    }
+
+    public function clearLinkings(): string
+    {
+        $this->fullResponse = false;
+        $response           = $this->clear();
+        return $response ? 'Linkings cleared' : 'Failed to clear linkings';
+    }
+
+    public function triggerAck(): string
+    {
+        //TODO: Implement Ack Method
+        return '';
     }
 
     public function startAuth(): string
@@ -113,16 +126,9 @@ class ConnectorTester extends ConnectorClient
 
     public function fromJson($controller, $payload)
     {
-        $payload  = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
-        $data = $this->getSerializer()->toArray($payload);
+        $payload = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
+        $data    = $this->getSerializer()->toArray($payload);
         return $this->requestAndPrepare($controller, 'clear', $data);
-    }
-
-    public function clearLinkings(): string
-    {
-        $this->fullResponse = false;
-        $response           = $this->clear();
-        return $response ? 'Linkings cleared' : 'Failed to clear linkings';
     }
 
     public function modelPush()
@@ -130,9 +136,19 @@ class ConnectorTester extends ConnectorClient
         //TODO: implement model push method.
     }
 
-    public function pushTest()
+    public function pushTest(): string
     {
-        //TODO: implement push test method.
+        //TODO: add image push
+        $response = [];
+        $json     = \file_get_contents('src/pushTest.json');
+        $payloads = \json_decode($json, true);
+        foreach ($payloads as $payload) {
+            $method            = $payload['method'];
+            $params            = \is_null($payload['params']) ? [] : $payload['params'];
+            $response[$method] = $this->request($method, $params);
+        }
+
+        return \json_encode($response, \JSON_PRETTY_PRINT);
     }
 
     public function disconnect(): void

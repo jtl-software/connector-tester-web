@@ -34,7 +34,7 @@ switch ($operation) {
         echo $tester->getSkeleton($controller);
         break;
     case 'pushTest':
-        echo json_decode($tester->pushTest());
+        echo $tester->pushTest();
         break;
     case 'modelPush':
         echo json_decode($tester->modelPush());
