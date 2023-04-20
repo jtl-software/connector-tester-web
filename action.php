@@ -4,12 +4,15 @@ use Jtl\ConnectorTester\ConnectorTester;
 
 include "vendor/autoload.php";
 
-$url        = $_POST['connectorUrl'];
-$token      = $_POST['connectorToken'];
-$action     = $_POST['action'];
-$controller = $_POST['controller'];
-$payload    = $_POST['payload'] ?? null;
-$operation  = $_POST['operation'];
+session_start();
+
+$_SESSION['sessionId'] = $_SESSION['sessionId'] ?? null;
+$url                   = $_POST['connectorUrl'];
+$token                 = $_POST['connectorToken'];
+$action                = $_POST['action'] ?? '';
+$controller            = $_POST['controller'] ?? '';
+$payload               = $_POST['payload'] ?? null;
+$operation             = $_POST['operation'];
 
 $tester = new ConnectorTester($token, $url, true);
 $tester->setResponseFormat($tester::RESPONSE_FORMAT_ARRAY);
@@ -38,4 +41,7 @@ switch ($operation) {
         break;
     case 'authenticate':
         echo $tester->startAuth();
+        break;
+    case 'disconnect':
+        $tester->disconnect();
 }

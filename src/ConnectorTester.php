@@ -30,6 +30,7 @@ class ConnectorTester extends ConnectorClient
         HttpClient $httpClient = null
     ) {
         parent::__construct($token, $endpointUrl, $fullResponse, $httpClient);
+        $this->sessionId = $_SESSION['sessionId'];
     }
 
     /**
@@ -53,21 +54,23 @@ class ConnectorTester extends ConnectorClient
                     $response = $this->push($controller, $payload);
                     break;
                 case self::ACTION_DELETE:
-                    $this->fullResponse = false;
+                    $this->fullResponse = true;
                     $response           = $this->delete($controller, $payload);
                     break;
                 case self::ACTION_STATS:
                     $response = $this->request($controller . '.statistic', ['limit' => 0]);
                     break;
                 case self::ACTION_IDENTIFY:
-                    $response = $this->identify()->getPlatformName();
+                    $this->fullResponse = false;
+                    $response           = $this->identify();
+                    $response           = $this->serializer->toArray($response);
                     break;
                 case self::ACTION_FEATURES:
                     $response = $this->request(RpcMethod::FEATURES);
                     break;
                 case self::ACTION_CLEAR:
                     $this->fullResponse = false;
-                    $response           = $this->clear();
+                    $response           = $this->clearLinkings();
                     break;
                 case self::ACTION_FINISH:
                     $response = $this->finish();
@@ -88,12 +91,19 @@ class ConnectorTester extends ConnectorClient
         return \json_encode($response, \JSON_PRETTY_PRINT);
     }
 
+    public function startAuth(): string
+    {
+        $this->authenticate();
+        $_SESSION['sessionId'] = $this->sessionId;
+        return "Authentication successful, Session ID: " . $this->sessionId;
+    }
+
     public function getSkeleton($controller): string
     {
-        $skeleton = 'Jtl\\Connector\\Core\\Model\\' . \ucfirst($controller);
+        $className = \sprintf('Jtl\\Connector\\Core\\Model\\%s', \ucfirst($controller));
 
         try {
-            $class = new $skeleton();
+            $class = new $className();
         } catch (\Error $e) {
             return 'No Model available for ' . $controller . ' controller';
         }
@@ -103,13 +113,16 @@ class ConnectorTester extends ConnectorClient
 
     public function fromJson($controller, $payload)
     {
-        //TODO: implement clear linkings from json method
+        $payload  = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
+        $data = $this->getSerializer()->toArray($payload);
+        return $this->requestAndPrepare($controller, 'clear', $data);
     }
 
-    public function clearLinkings(): bool
+    public function clearLinkings(): string
     {
         $this->fullResponse = false;
-        return $this->clear();
+        $response           = $this->clear();
+        return $response ? 'Linkings cleared' : 'Failed to clear linkings';
     }
 
     public function modelPush()
@@ -122,10 +135,8 @@ class ConnectorTester extends ConnectorClient
         //TODO: implement push test method.
     }
 
-    public function startAuth(): string
+    public function disconnect(): void
     {
-        //TODO: save session
-        $this->authenticate();
-        return "Authentication successful, Session ID: " . $this->sessionId;
+        \session_unset();
     }
 }

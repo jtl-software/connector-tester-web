@@ -145,18 +145,23 @@ function handleControls(disableButton) {
 }
 
 function handleAuthentication(disableButton = null) {
-    const button = $('#authenticate');
+    const authenticateButton = $('#authenticate');
+    const disconnectButton = $('#disconnect');
     const results = $('#results');
 
-    localStorage.key(0) === null ? button.attr('disabled', true) : button.attr('disabled', false);
+    localStorage.key(0) === null ? authenticateButton.attr('disabled', true) : authenticateButton.attr('disabled', false);
 
     if (disableButton === false) {
-        button.val('authenticated');
-        button.text('Disconnect');
+        authenticateButton.attr('disabled', true);
+        authenticateButton.attr('hidden', true)
+        disconnectButton.attr('disabled', false);
+        disconnectButton.attr('hidden', false);
         handleControls(false);
     } else if (disableButton === true) {
-        button.val('notAuthenticated');
-        button.text('Authenticate');
+        authenticateButton.attr('disabled', false);
+        authenticateButton.attr('hidden', false)
+        disconnectButton.attr('disabled', true);
+        disconnectButton.attr('hidden', true);
         results.val('');
         handleControls(true);
     }
@@ -164,6 +169,15 @@ function handleAuthentication(disableButton = null) {
 
 function submitForm(target) {
     const connector = $('#connectorDropdown');
+    const action = $('#actionDropdown :selected');
+    const payload = $('#payload');
+    const result = $('#results');
+
+    if (action.val() === 'Push' && payload.val() === '' || action.val() === 'Delete' && payload.val() === '') {
+        result.val(`Can't ${action.val()} because Payload is missing.`);
+        return;
+    }
+
     connector.attr('disabled', false);
 
     const formData = $('#mainForm').serialize() + '&operation=' + target;
@@ -209,9 +223,11 @@ function registerEvents() {
         if (button.val() === 'notAuthenticated') {
             submitForm('authenticate');
             handleAuthentication(false);
-        } else {
-            handleAuthentication(true);
         }
+    })
+    $('#disconnect').on('click', function () {
+        submitForm('disconnect');
+        handleAuthentication(true);
     })
 
     $('#submitNewConnection').on('click', function () {
