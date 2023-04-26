@@ -85,7 +85,7 @@ function buildActionDropDownOptions() {
     const controllers = {
         category: ['Pull', 'Push', 'Delete', 'Stats'],
         connector: ['Finish', 'Identify'],
-        core: ['Auth', 'Ack', 'Clear', 'Features', 'Init'],
+        core: ['Auth', 'Clear', 'Features', 'Init'],
         crossSelling: [''],
         customer: ['Pull', 'Push', 'Stats'],
         customerOrder: ['Pull', 'Stats'],

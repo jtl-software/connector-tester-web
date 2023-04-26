@@ -13,6 +13,7 @@ $action                = $_POST['action'] ?? '';
 $controller            = $_POST['controller'] ?? '';
 $payload               = $_POST['payload'] ?? null;
 $operation             = $_POST['operation'];
+$result                = $_POST['results'] ?? null;
 
 $tester = new ConnectorTester($token, $url, true);
 $tester->setResponseFormat($tester::RESPONSE_FORMAT_ARRAY);
@@ -22,7 +23,7 @@ switch ($operation) {
         echo $tester->triggerAction($controller, $action, $payload);
         break;
     case 'triggerAck':
-        echo json_decode($tester->triggerAck());
+        echo $tester->triggerAck($controller, $result);
         break;
     case 'clearLinkings':
         echo $tester->clearLinkings();

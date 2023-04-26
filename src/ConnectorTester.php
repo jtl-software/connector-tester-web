@@ -6,6 +6,8 @@ use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Definition\RpcMethod;
+use Jtl\Connector\Core\Model\Ack;
+use Jtl\Connector\Core\Model\Identity;
 
 class ConnectorTester extends ConnectorClient
 {
@@ -17,7 +19,6 @@ class ConnectorTester extends ConnectorClient
         ACTION_FINISH   = 'Finish',
         ACTION_IDENTIFY = 'Identify',
         ACTION_AUTH     = 'Auth',
-        ACTION_ACK      = 'Ack',
         ACTION_CLEAR    = 'Clear',
         ACTION_FEATURES = 'Features',
         ACTION_INIT     = 'Init';
@@ -75,9 +76,6 @@ class ConnectorTester extends ConnectorClient
                 case self::ACTION_FINISH:
                     $response = $this->finish();
                     break;
-                case self::ACTION_ACK:
-                    $response = $this->triggerAck();
-                    break;
                 case self::ACTION_INIT:
                     $response = $this->request(RpcMethod::INIT);
                     break;
@@ -98,10 +96,30 @@ class ConnectorTester extends ConnectorClient
         return $response ? 'Linkings cleared' : 'Failed to clear linkings';
     }
 
-    public function triggerAck(): string
+    public function triggerAck(string $controller, string $pullResult): string
     {
-        //TODO: Implement Ack Method
-        return '';
+        /** @var Identity $identities */
+        $identities = [];
+        $models     = \json_decode($pullResult, true);
+        if (\is_bool($models['result']) || empty($models['result']) || $models === null || empty($pullResult)) {
+            return 'Data needs to be pulled first';
+        }
+
+        foreach ($models['result'] as $model) {
+            $id           = \rand();
+            $identity     = new Identity($model['id'][0], $id);
+            $identities[] = $identity;
+        }
+        $ack = new Ack();
+        $ack->setIdentities([\ucfirst($controller) => $identities]);
+
+        try {
+            $response = $this->ack($ack);
+        } catch (\Error $e) {
+            $response = $e;
+        }
+
+        return \json_encode($response, \JSON_PRETTY_PRINT);
     }
 
     public function startAuth(): string
