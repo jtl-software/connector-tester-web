@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Definition\RpcMethod;
 use Jtl\Connector\Core\Model\Ack;
+use Jtl\Connector\Core\Model\Identities;
 use Jtl\Connector\Core\Model\Identity;
 
 class ConnectorTester extends ConnectorClient
@@ -96,6 +97,13 @@ class ConnectorTester extends ConnectorClient
         return $response ? 'Linkings cleared' : 'Failed to clear linkings';
     }
 
+    public function startAuth(): string
+    {
+        $this->authenticate();
+        $_SESSION['sessionId'] = $this->sessionId;
+        return "Authentication successful, Session ID: " . $this->sessionId;
+    }
+
     public function triggerAck(string $controller, string $pullResult): string
     {
         /** @var Identity $identities */
@@ -122,13 +130,6 @@ class ConnectorTester extends ConnectorClient
         return \json_encode($response, \JSON_PRETTY_PRINT);
     }
 
-    public function startAuth(): string
-    {
-        $this->authenticate();
-        $_SESSION['sessionId'] = $this->sessionId;
-        return "Authentication successful, Session ID: " . $this->sessionId;
-    }
-
     public function getSkeleton($controller): string
     {
         $className = \sprintf('Jtl\\Connector\\Core\\Model\\%s', \ucfirst($controller));
@@ -142,11 +143,19 @@ class ConnectorTester extends ConnectorClient
         return \json_encode($this->getSerializer()->toArray($class), \JSON_PRETTY_PRINT);
     }
 
-    public function fromJson($controller, $payload)
+    public function fromJson($controller, $payload): string
     {
-        $payload = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
-        $data    = $this->getSerializer()->toArray($payload);
-        return $this->requestAndPrepare($controller, 'clear', $data);
+        $identities      = new Identities();
+        $identitiesArray = [];
+        $payload         = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
+
+        foreach ($payload as $item) {
+            $identity                       = new Identity($item[0], $item[1]);
+            $identitiesArray[$controller][] = $identity;
+        }
+
+        $identities->setIdentities($identitiesArray);
+        return \json_encode($this->clearFromJson($identities), \JSON_PRETTY_PRINT);
     }
 
     public function modelPush()

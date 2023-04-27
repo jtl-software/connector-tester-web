@@ -29,7 +29,7 @@ switch ($operation) {
         echo $tester->clearLinkings();
         break;
     case 'fromJson':
-        $tester->fromJson($controller, $payload);
+        echo $tester->fromJson($controller, $payload);
         break;
     case 'getSkeleton':
         echo $tester->getSkeleton($controller);
