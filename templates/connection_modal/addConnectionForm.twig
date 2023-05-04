@@ -2,7 +2,7 @@
     <input type="hidden" name="method" value="newConnection">
     <div class="mb-3">
         <label for="newConnectionName" class="form-label">Connector Name</label>
-        <input type="text" id="newConnectionName" name="newConnectionName" class="form-control">
+        <input type="text" id="newConnectionName" name="newConnectionName" class="form-control" required>
     </div>
     <div class="mb-3">
         <label for="newConnectionUrl" class="form-label">Url</label>
@@ -12,5 +12,5 @@
         <label for="newConnectionToken" class="form-label">Token</label>
         <input type="text" id="newConnectionToken" name="newConnectionToken" class="form-control" required>
     </div>
-    <button type="submit" class="btn btn-primary" id="submitNewConnection">Submit</button>
+    <button type="button" class="btn btn-primary" id="submitNewConnection">Submit</button>
 </form>

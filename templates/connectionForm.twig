@@ -1,3 +1,8 @@
+<div class="alert alert-danger alert-dismissible fade show text-center w-50 m-auto" style="display: none" role="alert"
+     id="connectionDeleted">
+    <span>Connection was deleted.</span>
+</div>
+
 <div class="row my-2">
     <div class="col-10">
         <div class="input-group mb-3">
@@ -6,11 +11,20 @@
             </select>
         </div>
     </div>
-    <div class="col-2 text-end">
-        <div class="d-grid gap-2">
-            <button class="btn btn-block btn-primary" type="button" name="operation" value="authenticate"
+    <div class="col-2 text-start">
+        <div class="">
+            <button class="btn btn-danger d-none" type="button" name="deleteConnection" value="deleteConnection"
+                    id="deleteConnection"><i class="bi bi-trash"></i>
+            </button>
+            <button class="btn btn-primary" disabled type="button" name="operation"
+                    value="notAuthenticated"
                     id="authenticate">
                 Authenticate
+            </button>
+            <button class="btn btn-primary" disabled hidden type="button" name="operation"
+                    value="authenticated"
+                    id="disconnect">
+                Disconnect
             </button>
         </div>
     </div>
@@ -22,10 +36,10 @@
             <input readonly="readonly" type="text" class="form-control" name="connectorToken" id="connectorToken">
         </div>
     </div>
-    <div class="col-2 text-end">
-        <div class="d-grid gap-2">
-            <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#connectionsModal">
-                Add Connection
+    <div class="col-2 text-start">
+        <div>
+            <button class="btn btn-block btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#connectionsModal" id="addConnection">
+                Credentials
             </button>
         </div>
     </div>

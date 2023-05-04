@@ -6,9 +6,16 @@ use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Definition\RpcMethod;
+use Jtl\Connector\Core\Model\Ack;
+use Jtl\Connector\Core\Model\Identities;
+use Jtl\Connector\Core\Model\Identity;
+use Jtl\Connector\Core\Model\ProductImage;
 
 class ConnectorTester extends ConnectorClient
 {
+
+    protected $sessionId = '';
+
     public const
         ACTION_PULL     = 'Pull',
         ACTION_PUSH     = 'Push',
@@ -17,11 +24,9 @@ class ConnectorTester extends ConnectorClient
         ACTION_FINISH   = 'Finish',
         ACTION_IDENTIFY = 'Identify',
         ACTION_AUTH     = 'Auth',
-        ACTION_ACK      = 'Ack',
         ACTION_CLEAR    = 'Clear',
         ACTION_FEATURES = 'Features',
         ACTION_INIT     = 'Init';
-
 
     public function __construct(
         string $token,
@@ -30,6 +35,7 @@ class ConnectorTester extends ConnectorClient
         HttpClient $httpClient = null
     ) {
         parent::__construct($token, $endpointUrl, $fullResponse, $httpClient);
+        $this->sessionId = $_SESSION['sessionId'] ?? '';
     }
 
     /**
@@ -53,27 +59,26 @@ class ConnectorTester extends ConnectorClient
                     $response = $this->push($controller, $payload);
                     break;
                 case self::ACTION_DELETE:
-                    $this->fullResponse = false;
+                    $this->fullResponse = true;
                     $response           = $this->delete($controller, $payload);
                     break;
                 case self::ACTION_STATS:
                     $response = $this->request($controller . '.statistic', ['limit' => 0]);
                     break;
                 case self::ACTION_IDENTIFY:
-                    $response = $this->identify()->getPlatformName();
+                    $this->fullResponse = false;
+                    $response           = $this->identify();
+                    $response           = $this->serializer->toArray($response);
                     break;
                 case self::ACTION_FEATURES:
                     $response = $this->request(RpcMethod::FEATURES);
                     break;
                 case self::ACTION_CLEAR:
                     $this->fullResponse = false;
-                    $response           = $this->clear();
+                    $response           = $this->clearLinkings();
                     break;
                 case self::ACTION_FINISH:
                     $response = $this->finish();
-                    break;
-                case self::ACTION_ACK:
-                    $response = $this->Ack();
                     break;
                 case self::ACTION_INIT:
                     $response = $this->request(RpcMethod::INIT);
@@ -88,12 +93,52 @@ class ConnectorTester extends ConnectorClient
         return \json_encode($response, \JSON_PRETTY_PRINT);
     }
 
-    public function getSkeleton($controller): string
+    public function clearLinkings(): string
     {
-        $skeleton = 'Jtl\\Connector\\Core\\Model\\' . \ucfirst($controller);
+        $this->fullResponse = false;
+        $response           = $this->clear();
+        return \json_encode($response ? 'Linkings cleared' : 'Failed to clear linkings');
+    }
+
+    public function startAuth(): string
+    {
+        $this->authenticate();
+        $_SESSION['sessionId'] = $this->sessionId;
+        return \json_encode("Authentication successful, Session ID: " . $this->sessionId);
+    }
+
+    public function triggerAck(string $controller, string $pullResult): string
+    {
+        /** @var Identity $identities */
+        $identities = [];
+        $models     = \json_decode($pullResult, true);
+        if (\is_bool($models['result']) || empty($models['result']) || $models === null || empty($pullResult)) {
+            return 'Data needs to be pulled first';
+        }
+
+        foreach ($models['result'] as $model) {
+            $id           = \rand();
+            $identity     = new Identity($model['id'][0], $id);
+            $identities[] = $identity;
+        }
+        $ack = new Ack();
+        $ack->setIdentities([\ucfirst($controller) => $identities]);
 
         try {
-            $class = new $skeleton();
+            $response = $this->ack($ack);
+        } catch (\Error $e) {
+            $response = $e;
+        }
+
+        return \json_encode($response, \JSON_PRETTY_PRINT);
+    }
+
+    public function getSkeleton($controller): string
+    {
+        $className = \sprintf('Jtl\\Connector\\Core\\Model\\%s', \ucfirst($controller));
+
+        try {
+            $class = new $className();
         } catch (\Error $e) {
             return 'No Model available for ' . $controller . ' controller';
         }
@@ -101,31 +146,48 @@ class ConnectorTester extends ConnectorClient
         return \json_encode($this->getSerializer()->toArray($class), \JSON_PRETTY_PRINT);
     }
 
-    public function fromJson($controller, $payload)
+    public function fromJson($controller, $payload): string
     {
-        //TODO: implement clear linkings from json method
+        $identities      = new Identities();
+        $identitiesArray = [];
+        $payload         = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
+
+        foreach ($payload as $item) {
+            $identity                       = new Identity($item[0], $item[1]);
+            $identitiesArray[$controller][] = $identity;
+        }
+
+        $identities->setIdentities($identitiesArray);
+        return \json_encode($this->clearFromJson($identities), \JSON_PRETTY_PRINT);
     }
 
-    public function clearLinkings(): bool
+    public function pushTest(): string
     {
-        $this->fullResponse = false;
-        return $this->clear();
+        $response = [];
+        $json     = \file_get_contents('src/pushTest.json');
+        $payloads = \json_decode($json, true);
+        foreach ($payloads as $payload) {
+            $method = $payload['method'];
+            $params = \is_null($payload['params']) ? [] : $payload['params'];
+            if ($payload['method'] === 'image.push') {
+                $images = [];
+                foreach ($params as $item) {
+                    /** @var $image ProductImage */
+                    $image = $this->getSerializer()->fromArray($item, 'Jtl\Connector\Core\Model\ProductImage');
+                    $image->setFilename(\realpath(__DIR__ . '/../assets/' . $image->getFilename()));
+                    $images[] = $image;
+                }
+                $response[$method] = $this->push('image', $images);
+            } else {
+                $response[$method] = $this->request($method, $params);
+            }
+        }
+
+        return \json_encode($response, \JSON_PRETTY_PRINT);
     }
 
-    public function modelPush()
+    public function disconnect(): void
     {
-        //TODO: implement model push method.
-    }
-
-    public function pushTest()
-    {
-        //TODO: implement push test method.
-    }
-
-    public function startAuth(): string
-    {
-        //TODO: save session
-        $this->authenticate();
-        return "Authentication successful, Session ID: " . $this->sessionId;
+        \session_unset();
     }
 }
