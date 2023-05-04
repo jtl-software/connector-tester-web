@@ -9,7 +9,6 @@ function saveConnectionToLocalStorage() {
     const saveAlert = $('#savedSuccessfully');
     const saveFailedAlert = $('#failedToSave');
     const missingInputAlert = $('#missingInput');
-    const deleteButton = $('#deleteConnection');
 
     const keys = ['url', 'token'];
     const values = [url, token];
@@ -19,18 +18,17 @@ function saveConnectionToLocalStorage() {
         object[keys[i]] = values[i];
     }
 
-    if (localStorage.getItem(name) === null && name) {
+    if (!name || !url || !token) {
+        missingInputAlert.show().fadeOut(3000);
+    } else if (name) {
         localStorage.setItem(name, JSON.stringify(object));
         saveAlert.show().fadeOut(3000);
         buildConnectorDropDownOptions();
         fillTokenField();
-        deleteButton.removeClass('d-none');
-
-    } else if (!name || !url || !token) {
-        missingInputAlert.show().fadeOut(3000);
     } else {
         saveFailedAlert.show().fadeOut(3000);
     }
+
 
     handleDeleteConnectionButton();
     handleAuthentication();
@@ -47,6 +45,19 @@ function deleteConnectionFromLocalStorage() {
 
     handleDeleteConnectionButton();
     handleAuthentication(true);
+}
+
+function editConnection() {
+    const selectedConnection = $('#connectorDropdown :selected').attr('id');
+    const localStorageItem = JSON.parse(localStorage.getItem(selectedConnection));
+    let name = $('#newConnectionName');
+    let url = $('#newConnectionUrl');
+    let token = $('#newConnectionToken');
+
+    name.val(selectedConnection);
+    url.val(localStorageItem.url);
+    token.val(localStorageItem.token);
+
 }
 
 function buildConnectorDropDownOptions() {
@@ -214,9 +225,6 @@ function registerEvents() {
     $('#pushTest').on('click', function () {
         submitForm('pushTest');
     })
-    $('#modelPush').on('click', function () {
-        submitForm('modelPush');
-    })
     $('#authenticate').on('click', function () {
         const button = $('#authenticate');
 
@@ -236,5 +244,8 @@ function registerEvents() {
 
     $('#deleteConnection').on('click', function () {
         deleteConnectionFromLocalStorage();
+    })
+    $('#addConnection').on('click', function () {
+        editConnection();
     })
 }

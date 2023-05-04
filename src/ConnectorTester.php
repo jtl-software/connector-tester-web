@@ -9,9 +9,13 @@ use Jtl\Connector\Core\Definition\RpcMethod;
 use Jtl\Connector\Core\Model\Ack;
 use Jtl\Connector\Core\Model\Identities;
 use Jtl\Connector\Core\Model\Identity;
+use Jtl\Connector\Core\Model\ProductImage;
 
 class ConnectorTester extends ConnectorClient
 {
+
+    protected $sessionId = '';
+
     public const
         ACTION_PULL     = 'Pull',
         ACTION_PUSH     = 'Push',
@@ -24,7 +28,6 @@ class ConnectorTester extends ConnectorClient
         ACTION_FEATURES = 'Features',
         ACTION_INIT     = 'Init';
 
-
     public function __construct(
         string $token,
         string $endpointUrl,
@@ -32,7 +35,7 @@ class ConnectorTester extends ConnectorClient
         HttpClient $httpClient = null
     ) {
         parent::__construct($token, $endpointUrl, $fullResponse, $httpClient);
-        $this->sessionId = $_SESSION['sessionId'];
+        $this->sessionId = $_SESSION['sessionId'] ?? '';
     }
 
     /**
@@ -94,14 +97,14 @@ class ConnectorTester extends ConnectorClient
     {
         $this->fullResponse = false;
         $response           = $this->clear();
-        return $response ? 'Linkings cleared' : 'Failed to clear linkings';
+        return \json_encode($response ? 'Linkings cleared' : 'Failed to clear linkings');
     }
 
     public function startAuth(): string
     {
         $this->authenticate();
         $_SESSION['sessionId'] = $this->sessionId;
-        return "Authentication successful, Session ID: " . $this->sessionId;
+        return \json_encode("Authentication successful, Session ID: " . $this->sessionId);
     }
 
     public function triggerAck(string $controller, string $pullResult): string
@@ -158,21 +161,26 @@ class ConnectorTester extends ConnectorClient
         return \json_encode($this->clearFromJson($identities), \JSON_PRETTY_PRINT);
     }
 
-    public function modelPush()
-    {
-        //TODO: implement model push method.
-    }
-
     public function pushTest(): string
     {
-        //TODO: add image push
         $response = [];
         $json     = \file_get_contents('src/pushTest.json');
         $payloads = \json_decode($json, true);
         foreach ($payloads as $payload) {
-            $method            = $payload['method'];
-            $params            = \is_null($payload['params']) ? [] : $payload['params'];
-            $response[$method] = $this->request($method, $params);
+            $method = $payload['method'];
+            $params = \is_null($payload['params']) ? [] : $payload['params'];
+            if ($payload['method'] === 'image.push') {
+                $images = [];
+                foreach ($params as $item) {
+                    /** @var $image ProductImage */
+                    $image = $this->getSerializer()->fromArray($item, 'Jtl\Connector\Core\Model\ProductImage');
+                    $image->setFilename(\realpath(__DIR__ . '/../assets/' . $image->getFilename()));
+                    $images[] = $image;
+                }
+                $response[$method] = $this->push('image', $images);
+            } else {
+                $response[$method] = $this->request($method, $params);
+            }
         }
 
         return \json_encode($response, \JSON_PRETTY_PRINT);

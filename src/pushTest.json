@@ -1260,5 +1260,27 @@
     ],
     "jtlrpc": "2.0",
     "id": "61becaeb77b04f6da9d2ee47694f3032"
+  },
+  {
+    "method": "image.push",
+    "params": [
+      {
+        "filename": "apple_logo.png",
+        "name": "rot",
+        "foreignKey": [
+          "",
+          4
+        ],
+        "id": [
+          "",
+          3419
+        ],
+        "relationType": "product",
+        "sort": 1,
+        "i18ns": []
+      }
+    ],
+    "jtlrpc": "2.0",
+    "id": "7b043bcd577242d08dfdbdb3be7bfaa0"
   }
 ]

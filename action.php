@@ -37,9 +37,6 @@ switch ($operation) {
     case 'pushTest':
         echo $tester->pushTest();
         break;
-    case 'modelPush':
-        echo json_decode($tester->modelPush());
-        break;
     case 'authenticate':
         echo $tester->startAuth();
         break;
