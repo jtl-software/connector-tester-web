@@ -5,6 +5,7 @@ namespace Jtl\ConnectorTester;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Client\ConnectorClient;
+use Jtl\Connector\Client\ResponseException;
 use Jtl\Connector\Core\Definition\RpcMethod;
 use Jtl\Connector\Core\Model\Ack;
 use Jtl\Connector\Core\Model\Identities;
@@ -102,7 +103,11 @@ class ConnectorTester extends ConnectorClient
 
     public function startAuth(): string
     {
-        $this->authenticate();
+        try {
+            $this->authenticate();
+        } catch (ResponseException $e) {
+            return $e->getCode();
+        }
         $_SESSION['sessionId'] = $this->sessionId;
         return \json_encode("Authentication successful, Session ID: " . $this->sessionId);
     }

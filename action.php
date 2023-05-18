@@ -5,6 +5,8 @@ use Jtl\ConnectorTester\ConnectorTester;
 include "vendor/autoload.php";
 
 session_start();
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Credentials: true");
 
 $_SESSION['sessionId'] = $_SESSION['sessionId'] ?? null;
 $url                   = $_POST['connectorUrl'];
