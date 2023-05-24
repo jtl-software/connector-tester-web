@@ -26,16 +26,16 @@ export default {
     <thead>
     <tr>
       <th scope="col">Name</th>
-      <th scope="col">Url</th>
-      <th scope="col">Token</th>
+      <th scope="col" class="d-none d-lg-table-cell">Url</th>
+      <th scope="col" class="d-none d-lg-table-cell">Token</th>
       <th scope="col"></th>
     </tr>
     </thead>
     <tbody>
     <tr v-for="(value, key) in credentials">
       <td >{{ key }}</td>
-      <td >{{ JSON.parse(value).url }}</td>
-      <td >{{ JSON.parse(value).token }}</td>
+      <td class="d-none d-lg-table-cell">{{ JSON.parse(value).url }}</td>
+      <td class="d-none d-lg-table-cell">{{ JSON.parse(value).token }}</td>
       <td>
         <div class="btn-group d-flex justify-content-center">
           <button class="btn btn-danger" @click="deleteConnection(key)">Delete</button>

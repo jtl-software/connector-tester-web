@@ -37,8 +37,8 @@ export default {
 </script>
 
 <template>
-  <div class="row my-2">
-    <div class="col-6">
+  <div class="row my-3 my-lg-2">
+    <div class="col-12 col-lg-6">
       <div class="input-group">
         <label for="controllerDropdown" class="input-group-text">Controller</label>
         <select class="form-select" id="controllerDropdown" name="controller" v-model="store.controller" @change="buildDefaultAction">
@@ -60,7 +60,7 @@ export default {
         </select>
       </div>
     </div>
-    <div class="col-6">
+    <div class="col-12 col-lg-6 mt-2 mt-lg-0">
       <div class="input-group">
         <label for="actionDropdown" class="input-group-text">Action</label>
         <select v-model="store.action" class="form-select" id="actionDropdown" name="action">

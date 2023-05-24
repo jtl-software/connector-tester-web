@@ -16,8 +16,12 @@ export default {
   <div class="mb-5">
     <NavbarComponent />
   </div>
-  <div class="container-fluid">
-    <FormComponent />
-    <ControlsComponent />
+  <div class="container-fluid ">
+    <div class="ms-4 me-4">
+      <FormComponent />
+    </div>
+    <div class="me-4">
+      <ControlsComponent />
+    </div>
   </div>
 </template>

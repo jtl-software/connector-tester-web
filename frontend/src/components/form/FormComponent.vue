@@ -21,10 +21,10 @@ export default {
 <template>
   <form>
     <div class="row">
-      <div class="col-6">
+      <div class="col-12 col-lg-6">
         <ResultWindowComponent />
       </div>
-      <div class="col-6">
+      <div class="col-12 col-lg-6 mt-3 mt-lg-0">
         <PayloadWindowComponent />
       </div>
     </div>

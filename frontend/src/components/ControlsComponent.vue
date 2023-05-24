@@ -47,7 +47,6 @@ export default {
     },
     async startPostRequest() {
       const message = this.axios.post(this.url, this.postData)
-      console.log(await message)
       store.resultData = (await message).data
     }
   }
@@ -55,10 +54,10 @@ export default {
 </script>
 
 <template>
-  <div class="row">
+  <div class="row ">
     <div class="col">
       <div class="d-flex justify-content-end">
-        <div class="btn-group" role="group">
+        <div class="btn-group-vertical" role="group">
           <div class="btn-group" role="group">
             <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" :disabled="!store.connected">
               Clear Linkings
