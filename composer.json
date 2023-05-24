@@ -5,7 +5,6 @@
   "require": {
     "jtl/connector-client": "^1.1",
     "ext-pdo": "*",
-    "twig/twig": "^3.4",
     "ext-json": "*"
   },
   "autoload": {
