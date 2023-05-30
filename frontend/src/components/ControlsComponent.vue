@@ -3,14 +3,13 @@ import {store} from "@/store";
 export default {
   data() {
     return {
-      url: 'http://connector-tester-web.jtl.test/action.php?XDEBUG_SESSION_START=PHPSTORM',
+      url: 'http://connector-tester-web.jtl.public.test/',
       store
     }
   },
   computed: {
     postData() {
       return {
-        operation: '',
         connectorUrl: store.url,
         connectorToken: store.token,
         action: store.action,
@@ -21,32 +20,8 @@ export default {
     },
   },
   methods: {
-    async clearAllLinkings() {
-      this.postData.operation = 'clearLinkings'
-      await this.startPostRequest()
-    },
-    async clearLinkingsFromJson() {
-      this.postData.operation = 'fromJson'
-      await this.startPostRequest()
-    },
-    async triggerAck() {
-      this.postData.operation = 'triggerAck'
-      await this.startPostRequest()
-    },
-    async getSkeleton() {
-      this.postData.operation = 'getSkeleton'
-      await this.startPostRequest()
-    },
-    async pushTest() {
-      this.postData.operation = 'pushTest'
-      await this.startPostRequest()
-    },
-    async triggerAction() {
-      this.postData.operation = 'triggerAction'
-      await this.startPostRequest()
-    },
-    async startPostRequest() {
-      const message = this.axios.post(this.url, this.postData)
+    async startPostRequest(url) {
+      const message = this.axios.post(this.url + url + '?XDEBUG_SESSION_START=PHPSTORM', this.postData)
       store.resultData = (await message).data
     }
   }
@@ -65,8 +40,8 @@ export default {
             <ul class="dropdown-menu w-100">
               <li class="mx-2">
                 <div class="btn-group-vertical w-100">
-                  <button class="btn btn-danger w-100" @click="clearAllLinkings">Clear all</button>
-                  <button class="btn btn-primary w-100" @click="clearLinkingsFromJson">Clear from json</button>
+                  <button class="btn btn-danger w-100" @click="startPostRequest('clearLinkings')">Clear all</button>
+                  <button class="btn btn-primary w-100" @click="startPostRequest('clearLinkingsFromJson')">Clear from json</button>
                 </div>
               </li>
             </ul>
@@ -78,15 +53,15 @@ export default {
             <ul class="dropdown-menu w-100">
               <li class="mx-2">
                 <div class="btn-group-vertical w-100">
-                  <button class="btn btn-warning w-100" @click="triggerAck">Trigger Ack</button>
-                  <button class="btn btn-primary w-100" @click="getSkeleton">Get Skeleton</button>
-                  <button class="btn btn-primary w-100" @click="pushTest">Push Test</button>
+                  <button class="btn btn-warning w-100" @click="startPostRequest('triggerAck')">Trigger Ack</button>
+                  <button class="btn btn-primary w-100" @click="startPostRequest('getSkeleton')">Get Skeleton</button>
+                  <button class="btn btn-primary w-100" @click="startPostRequest('pushTest')">Push Test</button>
                 </div>
               </li>
             </ul>
           </div>
         </div>
-        <button class="btn btn-lg btn-success ms-1" :disabled="!store.connected" @click="triggerAction">Trigger Action</button>
+        <button class="btn btn-lg btn-success ms-1" :disabled="!store.connected" @click="startPostRequest(store.action)">Trigger Action</button>
       </div>
     </div>
   </div>

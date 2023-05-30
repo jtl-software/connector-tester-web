@@ -6,7 +6,7 @@ export default {
       actions: {
         category: ['Pull', 'Push', 'Delete', 'Stats'],
         connector: ['Finish', 'Identify'],
-        core: ['Auth', 'Clear', 'Features', 'Init'],
+        core: ['Clear', 'Features', 'Init'],
         customer: ['Pull', 'Push', 'Stats'],
         customerOrder: ['Pull', 'Stats'],
         deliveryNote: ['Push'],
@@ -41,7 +41,7 @@ export default {
     <div class="col-12 col-lg-6">
       <div class="input-group">
         <label for="controllerDropdown" class="input-group-text">Controller</label>
-        <select class="form-select" id="controllerDropdown" name="controller" v-model="store.controller" @change="buildDefaultAction">
+        <select class="form-select" id="controllerDropdown" name="controller" :disabled="!store.connected" v-model="store.controller" @change="buildDefaultAction">
           <option value="category">Category</option>
           <option value="connector">Connector</option>
           <option value="core">Core</option>
@@ -63,7 +63,7 @@ export default {
     <div class="col-12 col-lg-6 mt-2 mt-lg-0">
       <div class="input-group">
         <label for="actionDropdown" class="input-group-text">Action</label>
-        <select v-model="store.action" class="form-select" id="actionDropdown" name="action">
+        <select v-model="store.action" class="form-select" :disabled="!store.connected" id="actionDropdown" name="action">
           <option v-for="(value) in possibleActions" :value="value">{{value}}</option>
         </select>
       </div>
