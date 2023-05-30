@@ -3,6 +3,7 @@
 namespace Jtl\ConnectorTester\Controller;
 
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Model\Ack;
 use Jtl\Connector\Core\Model\Identity;
@@ -79,7 +80,7 @@ class DevOptionsController extends ConnectorClient
 
     /**
      * @return string
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function pushTest(): string
     {

@@ -14,18 +14,31 @@ class LinkingsController extends ConnectorClient
      */
     private string $response;
 
+    /**
+     * @param string $token
+     * @param string $endpointUrl
+     * @param HttpClient|null $httpClient
+     */
     public function __construct(string $token, string $endpointUrl, HttpClient $httpClient = null)
     {
         parent::__construct($token, $endpointUrl, $httpClient);
         $this->sessionId = $_SESSION['sessionId'] ?? '';
     }
 
+    /**
+     * @return string
+     */
     public function clearLinkings(): string
     {
         $this->setResponse($this->clear());
         return \json_encode($this->getResponse() ? 'Linkings cleared' : 'Failed to clear linkings');
     }
 
+    /**
+     * @param string $controller
+     * @param string $payload
+     * @return string
+     */
     public function clearLinkingsFromJson(string $controller, string $payload): string
     {
         $identities      = new Identities();
