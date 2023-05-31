@@ -7,8 +7,6 @@ include:
 
 code_quality:
   stage: test
-  dependencies:
-    - build:dev
   variables:
     STAN_FOLDERS: 'src public/index.php'
     CQ_FOLDERS: 'src public/index.php'
