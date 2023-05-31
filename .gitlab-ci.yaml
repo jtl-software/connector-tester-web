@@ -1,0 +1,16 @@
+stages:
+  - test
+
+include:
+  - project: 'connector/connector-utils/CI-Templates'
+    file: 'code-quality/ci-phpstan.yaml'
+
+code_quality:
+  stage: test
+  dependencies:
+    - build:dev
+  variables:
+    STAN_FOLDERS: 'src public/index.php'
+    CQ_FOLDERS: 'src public/index.php'
+    CQ_PHP_VERSION: '8.2'
+    CQ_STANDARDS: '/tmp/code-quality/ConnectorCoreStandard.xml'
