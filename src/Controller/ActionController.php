@@ -114,16 +114,6 @@ class ActionController extends ConnectorClient
 
     /**
      * @return string
-     */
-    public function coreClearLinkings(): string
-    {
-        $this->setFullResponse(false);
-        $this->setResponse($this->clear());
-        return $this->getResponse() ? 'Linkings cleared' : 'Failed to clear linkings';
-    }
-
-    /**
-     * @return string
      * @throws GuzzleException
      */
     public function coreFeatures(): string
@@ -142,5 +132,4 @@ class ActionController extends ConnectorClient
         $this->setResponse(\json_encode($this->request(RpcMethod::INIT)));
         return $this->getResponse();
     }
-
 }

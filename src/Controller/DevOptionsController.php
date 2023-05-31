@@ -71,9 +71,10 @@ class DevOptionsController extends ConnectorClient
             $class = new $className();
         } catch (\Error $e) {
             $this->setResponse('No Model available for ' . $controller . ' controller');
+            return $this->getResponse();
         }
 
-        $this->setResponse(\json_encode($this->getSerializer()->toArray($class), \JSON_PRETTY_PRINT));
+        $this->setResponse(\json_encode([$this->getSerializer()->toArray($class)], \JSON_PRETTY_PRINT));
 
         return $this->getResponse();
     }

@@ -41,6 +41,7 @@ class LinkingsController extends ConnectorClient
      */
     public function clearLinkingsFromJson(string $controller, string $payload): string
     {
+        $this->setFullResponse(true);
         $identities      = new Identities();
         $identitiesArray = [];
         $payload         = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
