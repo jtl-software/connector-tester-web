@@ -30,7 +30,7 @@ class RouteController
      */
     public function disconnect(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes     = $this->getAttributes($request);
         $authController = new AuthController($attributes['connectorToken'], $attributes['connectorUrl']);
         $authController->disconnect();
 
@@ -44,7 +44,7 @@ class RouteController
      */
     public function pull(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->controllerPull($attributes['controller']));
 
@@ -58,7 +58,7 @@ class RouteController
      */
     public function push(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write(
             $actionController->controllerPush($attributes['controller'], $attributes['payload'])
@@ -74,7 +74,7 @@ class RouteController
      */
     public function delete(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write(
             $actionController->controllerDelete($attributes['controller'], $attributes['payload'])
@@ -91,7 +91,7 @@ class RouteController
      */
     public function stats(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->controllerStats($attributes['controller']));
 
@@ -105,7 +105,7 @@ class RouteController
      */
     public function finish(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->connectorFinish());
 
@@ -119,7 +119,7 @@ class RouteController
      */
     public function identify(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->connectorIdentify());
 
@@ -133,7 +133,7 @@ class RouteController
      */
     public function clear(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new LinkingsController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->clearLinkings());
 
@@ -148,7 +148,7 @@ class RouteController
      */
     public function features(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->coreFeatures());
 
@@ -163,7 +163,7 @@ class RouteController
      */
     public function init(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $attributes    = $this->getAttributes($request);
+        $attributes       = $this->getAttributes($request);
         $actionController = new ActionController($attributes['connectorToken'], $attributes['connectorUrl']);
         $response->getBody()->write($actionController->coreInit());
 
