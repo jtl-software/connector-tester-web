@@ -21,16 +21,17 @@ class AuthController extends ConnectorClient
 
     /**
      * @return string
+     * @throws \JsonException
      */
     public function startAuth(): string
     {
         try {
             $this->authenticate();
         } catch (ResponseException $e) {
-            return $e->getCode();
+            return (string) $e->getCode();
         }
         $_SESSION['sessionId'] = $this->sessionId;
-        return \json_encode("Authentication successful, Session ID: " . $this->sessionId);
+        return \json_encode("Authentication successful, Session ID: " . $this->sessionId, \JSON_THROW_ON_ERROR);
     }
 
     /**
