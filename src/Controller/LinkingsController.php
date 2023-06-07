@@ -35,13 +35,14 @@ class LinkingsController extends ConnectorClient
      * @param string $payload
      * @return string
      * @throws GuzzleException
+     * @throws \JsonException
      */
     public function clearLinkingsFromJson(string $controller, string $payload): string
     {
         $this->setFullResponse(true);
         $identities      = new Identities();
         $identitiesArray = [];
-        $payload         = \json_decode($payload, true, 512, \JSON_OBJECT_AS_ARRAY);
+        $payload         = \json_decode($payload, true, flags:\JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
 
         /** @var array<int, array{0: numeric-string, 1: int}> $payload */
         foreach ($payload as $item) {

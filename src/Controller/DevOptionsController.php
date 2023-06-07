@@ -12,11 +12,6 @@ use Jtl\Connector\Core\Model\ProductImage;
 class DevOptionsController extends ConnectorClient
 {
     /**
-     * @var string
-     */
-    private string $response;
-
-    /**
      * @param string $token
      * @param string $endpointUrl
      * @param HttpClient|null $httpClient
@@ -32,36 +27,33 @@ class DevOptionsController extends ConnectorClient
      * @param string $controller
      * @param string $pullResult
      * @return string
+     * @throws \JsonException
      */
     public function triggerAck(string $controller, string $pullResult): string
     {
-        /** @var Identity $identities */
+        /** @var array<string, Identity> | array{} $identities */
         $identities = [];
         $models     = \json_decode($pullResult, true);
-        if (\is_bool($models['result']) || empty($models['result']) || $models === null || empty($pullResult)) {
+        if (!\is_array($models) || \is_bool($models['result']) || empty($pullResult)) {
             return 'Data needs to be pulled first';
         }
 
         foreach ($models['result'] as $model) {
-            $id           = \rand();
-            $identity     = new Identity($model['id'][0], $id);
-            $identities[] = $identity;
+            $id                                = \rand();
+            $identity                          = new Identity($model['id'][0], $id);
+            $identities[\ucfirst($controller)] = $identity;
         }
         $ack = new Ack();
-        $ack->setIdentities([\ucfirst($controller) => $identities]);
+        $ack->setIdentities($identities);
 
-        try {
-            $this->setResponse(\json_encode($this->ack($ack), \JSON_PRETTY_PRINT));
-        } catch (\Error $e) {
-            $this->setResponse($e);
-        }
 
-        return $this->getResponse();
+        return \json_encode($this->ack($ack), \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @param string $controller
      * @return string
+     * @throws \JsonException
      */
     public function getSkeleton(string $controller): string
     {
@@ -70,33 +62,44 @@ class DevOptionsController extends ConnectorClient
         try {
             $class = new $className();
         } catch (\Error $e) {
-            $this->setResponse('No Model available for ' . $controller . ' controller');
-            return $this->getResponse();
+            return 'No Model available for ' . $controller . ' controller';
         }
 
-        $this->setResponse(\json_encode([$this->getSerializer()->toArray($class)], \JSON_PRETTY_PRINT));
-
-        return $this->getResponse();
+        return \json_encode([$this->getSerializer()->toArray($class)], \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @return string
      * @throws GuzzleException
+     * @throws \JsonException
      */
     public function pushTest(): string
     {
         $response = [];
         $json     = \file_get_contents(__DIR__ . '/../pushTest.json');
-        $payloads = \json_decode($json, true);
+
+        if ($json === false) {
+            return "Couldn't access 'pushTest.json' file";
+        }
+
+        /** @var array<int, array{method: string, params: null|array<mixed>, jtlrpc: numeric-string, id: string}> $payloads */
+        $payloads = \json_decode($json, true, flags: \JSON_THROW_ON_ERROR);
         foreach ($payloads as $payload) {
             $method = $payload['method'];
             $params = \is_null($payload['params']) ? [] : $payload['params'];
             if ($payload['method'] === 'image.push') {
                 $images = [];
+                /** @var array{filename: string, name: string, foreignKey: array{0: numeric-string, 1: int}, id: array{0: numeric-string, 1: int}, relationType: string, sort: int, i18ns: array<mixed>} $item */
                 foreach ($params as $item) {
-                    /** @var $image ProductImage */
-                    $image = $this->getSerializer()->fromArray($item, 'Jtl\Connector\Core\Model\AbstractImage');
-                    $image->setFilename(\realpath(__DIR__ . '/../../assets/' . $image->getFilename()));
+                    /** @var ProductImage $image */
+                    $image    = $this->getSerializer()->fromArray($item, 'Jtl\Connector\Core\Model\AbstractImage');
+                    $filePath = \realpath(__DIR__ . '/../../assets/' . $image->getFilename());
+
+                    if ($filePath === false) {
+                        return "Couldn't resolve filepath";
+                    }
+
+                    $image->setFilename($filePath);
                     $images[] = $image;
                 }
                 $response[$method] = $this->push('image', $images);
@@ -104,25 +107,6 @@ class DevOptionsController extends ConnectorClient
                 $response[$method] = $this->request($method, $params);
             }
         }
-        $foo = 'bar';
-        return \json_encode($response, \JSON_PRETTY_PRINT);
-    }
-
-    /**
-     * @return string
-     */
-    public function getResponse(): string
-    {
-        return $this->response;
-    }
-
-    /**
-     * @param string $response
-     * @return DevOptionsController
-     */
-    public function setResponse(string $response): DevOptionsController
-    {
-        $this->response = $response;
-        return $this;
+        return \json_encode($response, \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
     }
 }
