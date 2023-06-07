@@ -10,11 +10,6 @@ use Jtl\Connector\Core\Definition\RpcMethod;
 class ActionController extends ConnectorClient
 {
     /**
-     * @var string
-     */
-    public string $response;
-
-    /**
      * @param string $token
      * @param string $endpointUrl
      * @param HttpClient|null $httpClient
@@ -30,106 +25,88 @@ class ActionController extends ConnectorClient
     /**
      * @param string $controller
      * @return string
+     * @throws \JsonException
      */
     public function controllerPull(string $controller): string
     {
-        $this->setResponse(\json_encode($this->pull($controller)));
-        return $this->getResponse();
-    }
-
-    /**
-     * @return string
-     */
-    public function getResponse(): string
-    {
-        return $this->response;
-    }
-
-    /**
-     * @param string $response
-     * @return ActionController
-     */
-    public function setResponse(string $response): ActionController
-    {
-        $this->response = $response;
-        return $this;
+        return \json_encode($this->pull($controller), \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @param string $controller
      * @param string $payload
      * @return string
+     * @throws \JsonException
      */
     public function controllerPush(string $controller, string $payload): string
     {
-        $payload = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
-        $this->setFullResponse(true);
-        $this->setResponse(\json_encode($this->push($controller, $payload)));
-        return $this->getResponse();
+        $payload = \json_decode($payload, flags: \JSON_OBJECT_AS_ARRAY);
+        /** @var array<int, array<mixed>> $payload */
+        return \json_encode($this->push($controller, $payload), \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @param string $controller
      * @param string $payload
      * @return string
+     * @throws \JsonException
      */
     public function controllerDelete(string $controller, string $payload): string
     {
-        $payload = \json_decode($payload, \JSON_OBJECT_AS_ARRAY);
-        $this->setFullResponse(true);
-        $this->setResponse(\json_encode($this->delete($controller, $payload)));
-        return $this->getResponse();
+        $payload = \json_decode($payload, flags: \JSON_OBJECT_AS_ARRAY);
+        /** @var array<int, array<mixed>> $payload */
+        return \json_encode($this->delete($controller, $payload), \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @param string $controller
      * @return string
      * @throws GuzzleException
+     * @throws \JsonException
      */
     public function controllerStats(string $controller): string
     {
-        $this->setResponse(\json_encode($this->request($controller . '.statistic', ['limit' => 0])));
-        return $this->getResponse();
+        return \json_encode($this->request($controller . '.statistic', ['limit' => 0]), \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @return string
+     * @throws \JsonException
      */
     public function connectorFinish(): string
     {
-        $this->setResponse(\json_encode($this->finish()));
-        return $this->getResponse();
+        return \json_encode($this->finish(), \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @return string
+     * @throws \JsonException
      */
     public function connectorIdentify(): string
     {
         $this->setFullResponse(false);
         $response = $this->identify();
-        $this->setResponse(\json_encode($this->serializer->toArray($response)));
-        return $this->getResponse();
+        return \json_encode($this->serializer->toArray($response), \JSON_THROW_ON_ERROR);
     }
 
     /**
      * @return string
      * @throws GuzzleException
+     * @throws \JsonException
      */
     public function coreFeatures(): string
     {
-        $this->setResponse(\json_encode($this->request(RpcMethod::FEATURES)));
-        return $this->getResponse();
+        return \json_encode($this->request(RpcMethod::FEATURES), \JSON_THROW_ON_ERROR);
     }
 
 
     /**
      * @return string
      * @throws GuzzleException
+     * @throws \JsonException
      */
     public function coreInit(): string
     {
-        $this->setResponse(\json_encode($this->request(RpcMethod::INIT)));
-        return $this->getResponse();
+        return \json_encode($this->request(RpcMethod::INIT), \JSON_THROW_ON_ERROR);
     }
 }
