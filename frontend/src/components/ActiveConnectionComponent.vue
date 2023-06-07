@@ -15,7 +15,7 @@ export default {
         const connection = JSON.parse(localStorage.getItem(this.selectedConnection))
         store.url = connection.url
         store.token = connection.token
-        const message = await this.axios.post('http://connector-tester-web.jtl.public.test/authenticate?XDEBUG_SESSION_START=PHPSTORM', {
+        const message = await this.axios.post('/authenticate', {
           connectorUrl: store.url,
           connectorToken: store.token
         })
@@ -29,7 +29,7 @@ export default {
         }
       } else {
         this.store.connected = !this.store.connected
-        await this.axios.post('http://connector-tester-web.jtl.public.test/disconnect?XDEBUG_SESSION_START=PHPSTORM', {
+        await this.axios.post('/disconnect', {
           connectorUrl: store.url,
           connectorToken: store.token
         })

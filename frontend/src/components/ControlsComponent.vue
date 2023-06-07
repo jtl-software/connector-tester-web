@@ -3,7 +3,6 @@ import {store} from "@/store";
 export default {
   data() {
     return {
-      url: 'http://connector-tester-web.jtl.public.test/',
       store
     }
   },
@@ -21,7 +20,7 @@ export default {
   },
   methods: {
     async startPostRequest(url) {
-      const message = this.axios.post(this.url + url + '?XDEBUG_SESSION_START=PHPSTORM', this.postData)
+      const message = this.axios.post(url, this.postData)
       store.resultData = (await message).data
     }
   }
