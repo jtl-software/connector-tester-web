@@ -13,10 +13,34 @@ export default {
     VueJsonPretty
   },
   methods: {
-    copy() {
-      navigator.clipboard.writeText(JSON.stringify(store.resultData, undefined, 2))
+    async copy(textToCopy) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(JSON.stringify(textToCopy, undefined, 2));
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = JSON.stringify(textToCopy, undefined, 2);
+        textArea.style.position = "absolute";
+        textArea.style.left = "-999999px";
+        document.body.prepend(textArea);
+        textArea.select();
+
+        try {
+          document.execCommand('copy');
+        } catch (error) {
+          console.error(error);
+        } finally {
+          textArea.remove();
+        }
+      }
+    },
+    async copyToClipboard() {
+      try {
+        await this.copy(store.resultData);
+      } catch(error) {
+        console.error(error);
+      }
     }
-  }
+  },
 }
 </script>
 <template>
@@ -30,11 +54,11 @@ export default {
   </ul>
   <div class="tab-content form-control overflow-scroll p-1" id="myTabContent" style="height: 32em">
     <div class="tab-pane show active position-relative" id="rawResults" role="tabpanel" aria-labelledby="rawResults" tabindex="0">
-      <button class="btn btn-outline-secondary position-absolute end-0 m-3" type="button" @click="copy">Copy</button>
+      <button class="btn btn-outline-secondary position-absolute end-0 m-3" type="button" @click="copyToClipboard">Copy</button>
       <pre>{{store.resultData}}</pre>
     </div>
     <div class="tab-pane position-relative" id="treeResults" role="tabpanel" aria-labelledby="treeResults" tabindex="0" >
-      <button class="btn btn-outline-secondary position-absolute end-0 m-3 z-3" type="button" @click="copy">Copy</button>
+      <button class="btn btn-outline-secondary position-absolute end-0 m-3 z-3" type="button" @click="copyToClipboard">Copy</button>
       <vue-json-pretty :data="store.resultData" :showLine="false" :showIcon="true" :showLength="true" :deep="3"></vue-json-pretty>
     </div>
   </div>

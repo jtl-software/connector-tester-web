@@ -42,7 +42,7 @@ class LinkingsController extends ConnectorClient
         $this->setFullResponse(true);
         $identities      = new Identities();
         $identitiesArray = [];
-        $payload         = \json_decode($payload, true, flags:\JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
+        $payload         = \json_decode($payload, true, flags: \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
 
         /** @var array<int, array{0: numeric-string, 1: int}> $payload */
         foreach ($payload as $item) {
@@ -50,7 +50,10 @@ class LinkingsController extends ConnectorClient
         }
         $identities->setIdentities($identitiesArray);
 
-        $response = \json_encode($this->clearFromJson($identities, $controller), \JSON_PRETTY_PRINT);
+        $response = \json_encode(
+            $this->clearFromJson($identities, $controller),
+            \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR
+        );
 
         return $response ? $response : "Couldn't clear Linkings";
     }

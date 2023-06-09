@@ -31,7 +31,6 @@ class DevOptionsController extends ConnectorClient
      */
     public function triggerAck(string $controller, string $pullResult): string
     {
-        /** @var array<string, Identity> | array{} $identities */
         $identities = [];
         $models     = \json_decode($pullResult, true);
         if (!\is_array($models) || \is_bool($models['result']) || empty($pullResult)) {
@@ -39,9 +38,10 @@ class DevOptionsController extends ConnectorClient
         }
 
         foreach ($models['result'] as $model) {
-            $id                                = \rand();
-            $identity                          = new Identity($model['id'][0], $id);
-            $identities[\ucfirst($controller)] = $identity;
+            $id       = \rand();
+            $identity = new Identity($model['id'][0], $id);
+            /** @var array{Identity} $identities */
+            $identities[\ucfirst($controller)][] = $identity;
         }
         $ack = new Ack();
         $ack->setIdentities($identities);
