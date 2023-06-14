@@ -1,5 +1,7 @@
 stages:
   - test
+  - build
+  - deploy
 
 include:
   - project: 'connector/connector-utils/CI-Templates'
@@ -12,3 +14,49 @@ code_quality:
     CQ_FOLDERS: 'src public/index.php'
     CQ_PHP_VERSION: '8.2'
     CQ_STANDARDS: '/tmp/code-quality/ConnectorCoreStandard.xml'
+
+build:prod:
+  stage: build
+  tags:
+    - docker
+  image: gitlab.jtl-software.com:4567/connector/connector-utils/ci-docker/php/cli:8.2
+  script:
+    - composer install --no-interaction --no-progress --no-dev --optimize-autoloader --prefer-dist
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - vendor/
+      - public/
+    expire_in: 1 hour
+    when: always
+    name: vendor-prod
+  cache:
+    key: vendor-prod
+    paths:
+      - vendor/
+      - frontend/node_modules
+
+build:dev:
+  stage: build
+  tags:
+    - docker
+  image: gitlab.jtl-software.com:4567/connector/connector-utils/ci-docker/php/cli:8.2
+  script:
+    - composer install --no-interaction --no-progress --optimize-autoloader --prefer-dist
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - vendor/
+      - public/
+    expire_in: 1 hour
+    when: always
+    name: vendor-dev
+  cache:
+    key: vendor-dev
+    paths:
+      - vendor/
+      - frontend/node_modules
