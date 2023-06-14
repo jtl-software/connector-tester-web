@@ -22,13 +22,9 @@ build:prod:
   image: gitlab.jtl-software.com:4567/connector/connector-utils/ci-docker/php/cli:8.2
   script:
     - composer install --no-interaction --no-progress --no-dev --optimize-autoloader --prefer-dist
-    - cd frontend
-    - npm install
-    - npm run build
   artifacts:
     paths:
       - vendor/
-      - public/
     expire_in: 1 hour
     when: always
     name: vendor-prod
@@ -36,6 +32,25 @@ build:prod:
     key: vendor-prod
     paths:
       - vendor/
+
+build:prod:frontend:
+  stage: build
+  tags:
+    - docker
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 hour
+    when: always
+    name: public-prod
+  cache:
+    key: node_modules-prod
+    paths:
       - frontend/node_modules
 
 build:dev:
@@ -45,13 +60,9 @@ build:dev:
   image: gitlab.jtl-software.com:4567/connector/connector-utils/ci-docker/php/cli:8.2
   script:
     - composer install --no-interaction --no-progress --optimize-autoloader --prefer-dist
-    - cd frontend
-    - npm install
-    - npm run build
   artifacts:
     paths:
       - vendor/
-      - public/
     expire_in: 1 hour
     when: always
     name: vendor-dev
@@ -59,4 +70,23 @@ build:dev:
     key: vendor-dev
     paths:
       - vendor/
+
+build:dev:frontend:
+  stage: build
+  tags:
+    - docker
+  image: node:20-alpine
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - public/
+    expire_in: 1 hour
+    when: always
+    name: public-dev
+  cache:
+    key: node_modules-dev
+    paths:
       - frontend/node_modules
