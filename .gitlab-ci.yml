@@ -116,7 +116,7 @@ deploy:stg:
   parallel:
     matrix:
       - SERVER:
-          - 'div04-prd-ddu01'
+          - 'div04-stg-ddu01'
 deploy:prd:
   stage: deploy:prd
   allow_failure: false
