@@ -1,7 +1,12 @@
 stages:
   - test
   - build
-  - deploy
+  - deploy:stg
+  - deploy:prd
+
+.deploy-script: &deploy-script
+  - sudo -u ${USER} /usr/bin/rsync -rlptogq -P --delete --exclude-from=.rsyncignore . ${ROOT_PATH}/
+  - sudo /bin/chown -R ${USER}:${USER} ${ROOT_PATH}/
 
 include:
   - project: 'connector/connector-utils/CI-Templates'
@@ -90,3 +95,48 @@ build:dev:frontend:
     key: node_modules-dev
     paths:
       - frontend/node_modules
+
+deploy:stg:
+  stage: deploy:stg
+  allow_failure: false
+  script:
+    *deploy-script
+  tags:
+    - ${SERVER}
+  dependencies:
+    - build:prod
+    - build:prod:frontend
+  variables:
+    USER: 'php-tester'
+    ROOT_PATH: '/var/www/tester-stg.jtl-connector.de/source'
+  environment:
+    name: staging/${SERVER}
+    url: 'https://tester-stg.jtl-connector.de'
+  when: manual
+  parallel:
+    matrix:
+      - SERVER:
+          - 'div04-prd-ddu01'
+deploy:prd:
+  stage: deploy:prd
+  allow_failure: false
+  script:
+    *deploy-script
+  tags:
+    - ${SERVER}
+  dependencies:
+    - build:prod
+    - build:prod:frontend
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
+  variables:
+    USER: 'php-tester'
+    ROOT_PATH: '/var/www/tester.jtl-connector.de/source'
+  environment:
+    name: production/${SERVER}
+    url: 'https://tester.jtl-connector.de'
+  when: manual
+  parallel:
+    matrix:
+      - SERVER:
+          - 'div04-prd-ddu01'

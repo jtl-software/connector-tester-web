@@ -1,0 +1,4 @@
+.git*
+.rsyncignore
+README.md
+frontend
