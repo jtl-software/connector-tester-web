@@ -6,6 +6,7 @@ stages:
 
 .deploy-script: &deploy-script
   - sudo -u ${USER} /bin/rsync -rlptogq -P --delete --exclude-from=.rsyncignore . ${ROOT_PATH}/
+  - sudo /bin/chown -R ${USER}:${USER} ${ROOT_PATH}/
 
 include:
   - project: 'connector/connector-utils/CI-Templates'
