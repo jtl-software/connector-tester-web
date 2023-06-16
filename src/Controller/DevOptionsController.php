@@ -20,6 +20,7 @@ class DevOptionsController extends ConnectorClient
     {
         parent::__construct($token, $endpointUrl, $httpClient);
         $this->sessionId = $_SESSION['sessionId'] ?? '';
+        $this->setResponseFormat(self::RESPONSE_FORMAT_ARRAY);
         $this->setFullResponse(true);
     }
 
