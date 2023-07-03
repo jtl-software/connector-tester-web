@@ -21,8 +21,8 @@ export default {
         })
 
         //790 is the authentication failed error Code
-        if (message.data === 790 || message.data === 10) {
-          this.store.resultData = "Couldn't authenticate, please check your credentials and connector settings"
+        if (message.data.startsWith('Error:')) {
+          this.store.resultData = message.data
         } else {
           this.store.connected = !this.store.connected
           this.store.resultData = message.data
