@@ -24,12 +24,13 @@ class ActionController extends ConnectorClient
 
     /**
      * @param string $controller
+     * @param int $limit
      * @return string
      * @throws \JsonException
      */
-    public function controllerPull(string $controller): string
+    public function controllerPull(string $controller, int $limit = self::DEFAULT_PULL_LIMIT): string
     {
-        return \json_encode($this->pull($controller), \JSON_THROW_ON_ERROR);
+        return \json_encode($this->pull($controller, $limit), \JSON_THROW_ON_ERROR);
     }
 
     /**
