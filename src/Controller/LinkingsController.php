@@ -58,7 +58,7 @@ class LinkingsController extends ConnectorClient
         $identities->setIdentities($identitiesArray);
 
         $response = \json_encode(
-            $this->clearFromJson($identities, $controller),
+            $this->clearFromJson($identities),
             \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR
         );
 

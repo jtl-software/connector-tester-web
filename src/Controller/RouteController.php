@@ -71,7 +71,9 @@ class RouteController
             $attributes['connectorUrl'],
             $this->client
         );
-        $response->getBody()->write($actionController->controllerPull($attributes['controller'], $attributes['limit']));
+        $response->getBody()->write(
+            $actionController->controllerPull($attributes['controller'], (int)$attributes['limit'])
+        );
 
         return $response;
     }
