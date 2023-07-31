@@ -41,8 +41,13 @@ class DevOptionsController extends ConnectorClient
         foreach ($models['result'] as $model) {
             $id       = \rand();
             $identity = new Identity($model['id'][0], $id);
+
+            $name = \ucfirst($controller);
+            if ($name === 'Image') {
+                $name = \ucfirst($model['relationType']) . 'Image';
+            }
             /** @var array{Identity} $identities */
-            $identities[\ucfirst($controller)][] = $identity;
+            $identities[$name][] = $identity;
         }
         $ack = new Ack();
         $ack->setIdentities($identities);
