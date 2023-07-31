@@ -42,12 +42,8 @@ class DevOptionsController extends ConnectorClient
             $id       = \rand();
             $identity = new Identity($model['id'][0], $id);
 
-            $name = \ucfirst($controller);
-            if ($name === 'Image') {
-                $name = \ucfirst($model['relationType']) . 'Image';
-            }
             /** @var array{Identity} $identities */
-            $identities[$name][] = $identity;
+            $identities[$controller][] = $identity;
         }
         $ack = new Ack();
         $ack->setIdentities($identities);
