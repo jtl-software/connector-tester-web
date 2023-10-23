@@ -14,7 +14,15 @@ class RouteController
 
     public function __construct()
     {
-        $this->client = new Client(['allow_redirects' => false]);
+        $this->client = new Client(
+            [
+                'allow_redirects' => false,
+                'headers' =>
+                    [
+                        'User-Agent' => 'jtl-connector-web-tester/1'
+                    ]
+            ]
+        );
     }
 
     /**
