@@ -39,10 +39,8 @@ class DevOptionsController extends ConnectorClient
         }
 
         foreach ($models['result'] as $model) {
-            $id       = \rand();
-            $identity = new Identity($model['id'][0], $id);
-
-            /** @var array{Identity} $identities */
+            $id                        = \rand();
+            $identity                  = new Identity($model['id'][0], $id);
             $identities[$controller][] = $identity;
         }
         $ack = new Ack();

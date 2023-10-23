@@ -47,7 +47,6 @@ class LinkingsController extends ConnectorClient
         }
 
         $this->setFullResponse(true);
-        $identities      = new Identities();
         $identitiesArray = [];
         $payload         = \json_decode($payload, true, flags: \JSON_OBJECT_AS_ARRAY | \JSON_THROW_ON_ERROR);
 
@@ -55,10 +54,9 @@ class LinkingsController extends ConnectorClient
         foreach ($payload as $item) {
             $identitiesArray[] = new Identity($item[0], $item[1]);
         }
-        $identities->setIdentities($identitiesArray);
 
         $response = \json_encode(
-            $this->clearFromJson($identities, $controller),
+            $this->clearFromJson($controller, ...$identitiesArray),
             \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR
         );
 
