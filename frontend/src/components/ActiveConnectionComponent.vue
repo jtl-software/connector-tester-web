@@ -11,6 +11,7 @@ export default {
   },
   methods: {
     async authenticate() {
+      const startTime = performance.now()
       if (!this.store.connected) {
         const connection = JSON.parse(localStorage.getItem(this.selectedConnection))
         store.url = connection.url
@@ -35,6 +36,8 @@ export default {
         })
         this.store.resultData = ''
       }
+      const endTime = performance.now()
+      store.responseTime = (endTime - startTime).toFixed(2)
     },
     update() {
       this.credentials = Object.assign({}, localStorage)

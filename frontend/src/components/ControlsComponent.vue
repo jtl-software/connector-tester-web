@@ -22,8 +22,11 @@ export default {
   },
   methods: {
     async startPostRequest(url) {
+      const startTime = performance.now()
       const message = this.axios.post(url, this.postData)
       store.resultData = (await message).data
+      const endTime = performance.now()
+      store.responseTime = (endTime - startTime).toFixed(2)
     }
   }
 }
