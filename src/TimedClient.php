@@ -24,7 +24,7 @@ class TimedClient extends ConnectorClient
 
     /**
      * @param string $method
-     * @param array $params
+     * @param array<string, int|string> $params
      * @param bool $authRequest
      * @param string|null $zipFile
      * @return mixed

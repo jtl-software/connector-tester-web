@@ -8,7 +8,6 @@ use Jtl\ConnectorTester\TimedClient;
 
 class ActionController extends TimedClient
 {
-
     /**
      * @param string $controller
      * @param int $limit

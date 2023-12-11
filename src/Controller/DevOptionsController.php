@@ -92,6 +92,7 @@ class DevOptionsController extends TimedClient
                 }
                 $response[$method] = $this->push('image', $images);
             } else {
+                /** @var array{} $params */
                 $response[$method] = $this->request($method, $params);
             }
         }
