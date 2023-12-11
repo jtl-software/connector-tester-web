@@ -11,7 +11,6 @@ export default {
   },
   methods: {
     async authenticate() {
-      const startTime = performance.now()
       if (!this.store.connected) {
         const connection = JSON.parse(localStorage.getItem(this.selectedConnection))
         store.url = connection.url
@@ -23,10 +22,12 @@ export default {
 
         //790 is the authentication failed error Code
         if (message.data.startsWith('Error:')) {
-          this.store.resultData = message.data
+          this.store.resultData = (await message).data
+          this.store.requestTime = parseFloat((await message).headers['x-request-time']).toFixed(2)
         } else {
           this.store.connected = !this.store.connected
-          this.store.resultData = message.data
+          this.store.resultData = (await message).data
+          this.store.requestTime = parseFloat((await message).headers['x-request-time']).toFixed(2)
         }
       } else {
         this.store.connected = !this.store.connected
@@ -35,9 +36,8 @@ export default {
           connectorToken: store.token
         })
         this.store.resultData = ''
+        this.store.requestTime = 0
       }
-      const endTime = performance.now()
-      store.responseTime = (endTime - startTime).toFixed(2)
     },
     update() {
       this.credentials = Object.assign({}, localStorage)

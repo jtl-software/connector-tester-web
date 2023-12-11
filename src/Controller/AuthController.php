@@ -5,20 +5,10 @@ namespace Jtl\ConnectorTester\Controller;
 use GuzzleHttp\Client as HttpClient;
 use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Client\ResponseException;
+use Jtl\ConnectorTester\TimedClient;
 
-class AuthController extends ConnectorClient
+class AuthController extends TimedClient
 {
-    /**
-     * @param string $token
-     * @param string $endpointUrl
-     * @param HttpClient|null $httpClient
-     */
-    public function __construct(string $token, string $endpointUrl, HttpClient $httpClient = null)
-    {
-        parent::__construct($token, $endpointUrl, $httpClient);
-        $this->sessionId = $_SESSION['sessionId'] ?? '';
-    }
-
     /**
      * @return string
      * @throws \JsonException

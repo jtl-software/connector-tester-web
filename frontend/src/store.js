@@ -8,5 +8,5 @@ export const store = reactive({
     payload: '',
     controller: 'category',
     action: 'Pull',
-    responseTime: 0
+    requestTime: 0
 })

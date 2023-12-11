@@ -1,5 +1,6 @@
 <script>
 import {store} from "@/store";
+
 export default {
   data() {
     return {
@@ -22,12 +23,10 @@ export default {
   },
   methods: {
     async startPostRequest(url) {
-      const startTime = performance.now()
       const message = this.axios.post(url, this.postData)
       store.resultData = (await message).data
-      const endTime = performance.now()
-      store.responseTime = (endTime - startTime).toFixed(2)
-    }
+      store.requestTime = parseFloat((await message).headers['x-request-time']).toFixed(2)
+    },
   }
 }
 </script>
@@ -45,20 +44,24 @@ export default {
         <div class="d-flex flex-column flex-lg-row">
           <div class="btn-group-vertical" role="group">
             <div class="btn-group" role="group">
-              <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" :disabled="!store.connected">
+              <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                      :disabled="!store.connected">
                 Clear Linkings
               </button>
               <ul class="dropdown-menu w-100">
                 <li class="mx-2">
                   <div class="btn-group-vertical w-100">
                     <button class="btn btn-danger w-100" @click="startPostRequest('clearLinkings')">Clear all</button>
-                    <button class="btn btn-primary w-100" @click="startPostRequest('clearLinkingsFromJson')">Clear from json</button>
+                    <button class="btn btn-primary w-100" @click="startPostRequest('clearLinkingsFromJson')">Clear from
+                      json
+                    </button>
                   </div>
                 </li>
               </ul>
             </div>
             <div class="btn-group" role="group">
-              <button class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" :disabled="!store.connected">
+              <button class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                      :disabled="!store.connected">
                 Dev Options
               </button>
               <ul class="dropdown-menu w-100">
@@ -72,7 +75,9 @@ export default {
               </ul>
             </div>
           </div>
-          <button class="btn btn-lg btn-success ms-1 h-100" :disabled="!store.connected" @click="startPostRequest(store.action)">Trigger Action</button>
+          <button class="btn btn-lg btn-success ms-1 h-100" :disabled="!store.connected"
+                  @click="startPostRequest(store.action)">Trigger Action
+          </button>
         </div>
       </div>
     </div>
