@@ -7,7 +7,8 @@
             url: this.url,
             token: this.token,
           };
-          localStorage.setItem(this.name, JSON.stringify(data));
+          localStorage.removeItem(this.oldName.trim());
+          localStorage.setItem(this.name.trim(), JSON.stringify(data));
         }
         this.emitToggleEvent()
         this.$emit('updateConnectionSelection')
@@ -21,12 +22,14 @@
     },
     data() {
       return {
+        oldName: '',
         name: this.connectorName,
         url: '',
         token: ''
       }
     },
     mounted() {
+      this.oldName = this.name
       if (localStorage.getItem(this.name)) {
         const data = JSON.parse(localStorage.getItem(this.name))
         this.url = data.url
