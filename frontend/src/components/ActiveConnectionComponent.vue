@@ -10,6 +10,14 @@ export default {
     }
   },
   methods: {
+    sortConnections() {
+      this.credentials = {}
+      Object.keys(Object.assign({}, localStorage))
+          .sort()
+          .forEach(key => {
+            this.credentials[key] = JSON.parse(localStorage.getItem(key))
+          })
+    },
     async authenticate() {
       if (!this.store.connected) {
         const connection = JSON.parse(localStorage.getItem(this.selectedConnection))
@@ -40,11 +48,11 @@ export default {
       }
     },
     update() {
-      this.credentials = Object.assign({}, localStorage)
+      this.sortConnections()
     }
   },
   mounted() {
-    this.credentials = Object.assign({}, localStorage)
+    this.sortConnections()
     this.selectedConnection = Object.keys(this.credentials)[0]
   }
 }
