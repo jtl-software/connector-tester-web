@@ -1,11 +1,16 @@
 <script>
 import {store} from "@/store";
+import ClearLinkingsModalComponent from "@/components/ClearLinkingsModalComponent.vue";
 
 export default {
+  components: {
+    ClearLinkingsModalComponent
+  },
   data() {
     return {
       store,
-      limit: 100
+      limit: 100,
+      clearOption: ''
     }
   },
   computed: {
@@ -22,6 +27,11 @@ export default {
     },
   },
   methods: {
+    handleClearConfirmationEvent(data) {
+      if (data) {
+        this.startPostRequest(this.clearOption)
+      }
+    },
     async startPostRequest(url) {
       const message = this.axios.post(url, this.postData)
       store.resultData = (await message).data
@@ -32,6 +42,7 @@ export default {
 </script>
 
 <template>
+  <ClearLinkingsModalComponent @clearConfirmationEvent="handleClearConfirmationEvent"/>
   <div class="row ">
     <div class="col">
       <div class="d-flex justify-content-between">
@@ -51,8 +62,8 @@ export default {
               <ul class="dropdown-menu w-100">
                 <li class="mx-2">
                   <div class="btn-group-vertical w-100">
-                    <button class="btn btn-danger w-100" @click="startPostRequest('clearLinkings')">Clear all</button>
-                    <button class="btn btn-primary w-100" @click="startPostRequest('clearLinkingsFromJson')">Clear from
+                    <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkings'">Clear all</button>
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkingsFromJson'">Clear from
                       json
                     </button>
                   </div>
