@@ -16,6 +16,8 @@ class LinkingsController extends TimedClient
      */
     public function clearLinkings(): string
     {
+        $this->setFullResponse(false);
+
         try {
             $this->clear();
         } catch (ResponseException $e) {
