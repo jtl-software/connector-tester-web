@@ -7,20 +7,10 @@ use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Client\ResponseException;
 use Jtl\Connector\Core\Model\Identities;
 use Jtl\Connector\Core\Model\Identity;
+use Jtl\ConnectorTester\TimedClient;
 
-class LinkingsController extends ConnectorClient
+class LinkingsController extends TimedClient
 {
-    /**
-     * @param string $token
-     * @param string $endpointUrl
-     * @param HttpClient|null $httpClient
-     */
-    public function __construct(string $token, string $endpointUrl, HttpClient $httpClient = null)
-    {
-        parent::__construct($token, $endpointUrl, $httpClient);
-        $this->sessionId = $_SESSION['sessionId'] ?? '';
-    }
-
     /**
      * @return string
      */

@@ -8,22 +8,10 @@ use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Model\Ack;
 use Jtl\Connector\Core\Model\Identity;
 use Jtl\Connector\Core\Model\ProductImage;
+use Jtl\ConnectorTester\TimedClient;
 
-class DevOptionsController extends ConnectorClient
+class DevOptionsController extends TimedClient
 {
-    /**
-     * @param string $token
-     * @param string $endpointUrl
-     * @param HttpClient|null $httpClient
-     */
-    public function __construct(string $token, string $endpointUrl, HttpClient $httpClient = null)
-    {
-        parent::__construct($token, $endpointUrl, $httpClient);
-        $this->sessionId = $_SESSION['sessionId'] ?? '';
-        $this->setResponseFormat(self::RESPONSE_FORMAT_ARRAY);
-        $this->setFullResponse(true);
-    }
-
     /**
      * @param string $controller
      * @param string $pullResult
@@ -104,6 +92,7 @@ class DevOptionsController extends ConnectorClient
                 }
                 $response[$method] = $this->push('image', $images);
             } else {
+                /** @var array{} $params */
                 $response[$method] = $this->request($method, $params);
             }
         }

@@ -2,26 +2,12 @@
 
 namespace Jtl\ConnectorTester\Controller;
 
-use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
-use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Definition\RpcMethod;
+use Jtl\ConnectorTester\TimedClient;
 
-class ActionController extends ConnectorClient
+class ActionController extends TimedClient
 {
-    /**
-     * @param string $token
-     * @param string $endpointUrl
-     * @param HttpClient|null $httpClient
-     */
-    public function __construct(string $token, string $endpointUrl, HttpClient $httpClient = null)
-    {
-        parent::__construct($token, $endpointUrl, $httpClient);
-        $this->sessionId = $_SESSION['sessionId'] ?? '';
-        $this->setResponseFormat(self::RESPONSE_FORMAT_ARRAY);
-        $this->setFullResponse(true);
-    }
-
     /**
      * @param string $controller
      * @param int $limit
