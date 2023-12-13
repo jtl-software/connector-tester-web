@@ -6,9 +6,18 @@ export default {
     }
   },
   methods: {
+    sortConnections() {
+      this.credentials = {}
+      const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+      Object.keys(Object.assign({}, localStorage))
+          .sort(collator.compare)
+          .forEach(key => {
+            this.credentials[key] = JSON.parse(localStorage.getItem(key))
+          })
+    },
     deleteConnection(key) {
       localStorage.removeItem(key)
-      this.credentials = Object.assign({}, localStorage)
+      delete this.credentials[key]
       this.$emit('updateConnectionSelection')
     },
     emitEvent(key) {
@@ -16,7 +25,7 @@ export default {
     }
   },
   mounted() {
-    this.credentials = Object.assign({}, localStorage)
+    this.sortConnections()
   }
 }
 </script>
@@ -34,8 +43,8 @@ export default {
     <tbody>
     <tr v-for="(value, key) in credentials">
       <td >{{ key }}</td>
-      <td class="d-none d-lg-table-cell">{{ JSON.parse(value).url }}</td>
-      <td class="d-none d-lg-table-cell">{{ JSON.parse(value).token }}</td>
+      <td class="d-none d-lg-table-cell">{{ value.url }}</td>
+      <td class="d-none d-lg-table-cell">{{ value.token }}</td>
       <td>
         <div class="btn-group d-flex justify-content-center">
           <button class="btn btn-danger" @click="deleteConnection(key)">Delete</button>
