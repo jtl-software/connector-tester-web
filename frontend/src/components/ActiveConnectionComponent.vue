@@ -12,8 +12,9 @@ export default {
   methods: {
     sortConnections() {
       this.credentials = {}
+      const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
       Object.keys(Object.assign({}, localStorage))
-          .sort()
+          .sort(collator.compare)
           .forEach(key => {
             this.credentials[key] = JSON.parse(localStorage.getItem(key))
           })
