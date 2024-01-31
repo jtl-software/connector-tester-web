@@ -63,9 +63,8 @@ export default {
                 <li class="mx-2">
                   <div class="btn-group-vertical w-100">
                     <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkings'">Clear all</button>
-                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkingsFromJson'">Clear from
-                      json
-                    </button>
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkingsFromJson'">Clear from json</button>
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearControllerLinkings'">Clear Method</button>
                   </div>
                 </li>
               </ul>
