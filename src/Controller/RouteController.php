@@ -324,8 +324,10 @@ class RouteController
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function clearControllerLinkings(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    public function clearControllerLinkings(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
         $attributes         = $this->getAttributes($request);
         $linkingsController = new LinkingsController(
             $attributes['connectorToken'],
