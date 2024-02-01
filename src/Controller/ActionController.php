@@ -27,6 +27,10 @@ class ActionController extends TimedClient
      */
     public function controllerPush(string $controller, string $payload): string
     {
+        if (empty($payload)) {
+            return 'A payload is needed to push data';
+        }
+
         $payload = \json_decode($payload, flags: \JSON_OBJECT_AS_ARRAY);
         /** @var array<int, array<mixed>> $payload */
         return \json_encode($this->push($controller, $payload), \JSON_THROW_ON_ERROR);
@@ -40,6 +44,10 @@ class ActionController extends TimedClient
      */
     public function controllerDelete(string $controller, string $payload): string
     {
+        if (empty($payload)) {
+            return 'A payload is needed to delete data';
+        }
+
         $payload = \json_decode($payload, flags: \JSON_OBJECT_AS_ARRAY);
         /** @var array<int, array<mixed>> $payload */
         return \json_encode($this->delete($controller, $payload), \JSON_THROW_ON_ERROR);

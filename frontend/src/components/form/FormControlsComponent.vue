@@ -7,6 +7,7 @@ export default {
         category: ['Pull', 'Push', 'Delete', 'Stats'],
         connector: ['Finish', 'Identify'],
         core: ['Clear', 'Features', 'Init'],
+        crossSelling: ['Pull', 'Push', 'Delete', 'Stats'],
         customer: ['Pull', 'Push', 'Stats'],
         customerOrder: ['Pull', 'Stats'],
         deliveryNote: ['Push'],
@@ -45,6 +46,7 @@ export default {
           <option value="category">Category</option>
           <option value="connector">Connector</option>
           <option value="core">Core</option>
+          <option value="crossSelling">Cross Selling</option>
           <option value="customer">Customer</option>
           <option value="customerOrder">Customer Order</option>
           <option value="deliveryNote">Delivery Note</option>
