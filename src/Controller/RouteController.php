@@ -323,6 +323,28 @@ class RouteController
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
+     */
+    public function clearControllerLinkings(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
+        $attributes         = $this->getAttributes($request);
+        $linkingsController = new LinkingsController(
+            $attributes['connectorToken'],
+            $attributes['connectorUrl'],
+            $this->client
+        );
+        $response->getBody()->write(
+            $linkingsController->clearControllerLinkings($attributes['controller'])
+        );
+
+        return $response;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      * @throws \RuntimeException
      */
     public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

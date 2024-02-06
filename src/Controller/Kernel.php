@@ -72,6 +72,8 @@ class Kernel
 
         $app->post('/clearLinkingsFromJson', [RouteController::class, 'clearFromJson']);
 
+        $app->post('/clearControllerLinkings', [RouteController::class, 'clearControllerLinkings']);
+
         $app->get('/', [RouteController::class, 'index']);
     }
 }

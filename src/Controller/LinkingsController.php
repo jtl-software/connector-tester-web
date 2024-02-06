@@ -3,6 +3,7 @@
 namespace Jtl\ConnectorTester\Controller;
 
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Client\ResponseException;
 use Jtl\Connector\Core\Model\Identities;
@@ -30,7 +31,7 @@ class LinkingsController extends TimedClient
      * @param string $controller
      * @param string $payload
      * @return string
-     * @throws \JsonException
+     * @throws \JsonException|GuzzleException
      */
     public function clearLinkingsFromJson(string $controller, string $payload): string
     {
@@ -52,6 +53,22 @@ class LinkingsController extends TimedClient
             \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR
         );
 
-        return $response ? $response : "Couldn't clear Linkings";
+        return $response ? $response : "Couldn't clear linkings";
+    }
+
+    /**
+     * @param string $controller
+     * @return string
+     * @throws \JsonException|GuzzleException
+     */
+    public function clearControllerLinkings(string $controller): string
+    {
+        $this->setFullResponse(true);
+        $response = \json_encode(
+            $this->clearFromJson($controller, new Identity()),
+            \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR
+        );
+
+        return $response ? $response : "Couldn't clear linkings";
     }
 }
