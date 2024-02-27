@@ -2,15 +2,13 @@
 
 namespace Jtl\ConnectorTester\Controller;
 
-use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
-use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Core\Model\Ack;
 use Jtl\Connector\Core\Model\Identity;
 use Jtl\Connector\Core\Model\ProductImage;
-use Jtl\ConnectorTester\TimedClient;
+use Jtl\ConnectorTester\ConnectorTesterClient;
 
-class DevOptionsController extends TimedClient
+class DevOptionsController extends ConnectorTesterClient
 {
     /**
      * @param string $controller

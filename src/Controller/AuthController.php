@@ -2,12 +2,10 @@
 
 namespace Jtl\ConnectorTester\Controller;
 
-use GuzzleHttp\Client as HttpClient;
-use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Client\ResponseException;
-use Jtl\ConnectorTester\TimedClient;
+use Jtl\ConnectorTester\ConnectorTesterClient;
 
-class AuthController extends TimedClient
+class AuthController extends ConnectorTesterClient
 {
     /**
      * @return string
@@ -18,7 +16,7 @@ class AuthController extends TimedClient
         try {
             $this->authenticate();
         } catch (ResponseException $e) {
-            return  'Error: ' . $e->getMessage();
+            return 'Error: ' . $e->getMessage();
         }
         $_SESSION['sessionId'] = $this->sessionId;
         return \json_encode("Authentication successful, Session ID: " . $this->sessionId, \JSON_THROW_ON_ERROR);
