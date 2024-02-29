@@ -51,7 +51,10 @@ class DevOptionsController extends ConnectorTesterClient
             return 'No Model available for ' . $controller . ' controller';
         }
 
-        return \json_encode([$this->getSerializer()->toArray($class)], \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
+        return \json_encode(
+            [$this->getArrayFillingSerializer()->toArray($class)],
+            \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR
+        );
     }
 
     /**
@@ -95,5 +98,25 @@ class DevOptionsController extends ConnectorTesterClient
             }
         }
         return \json_encode($response, \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @param string $controller
+     * @param bool $generateRandomData
+     * @return string
+     * @throws \JsonException
+     */
+    public function generatePayload(string $controller, bool $generateRandomData): string
+    {
+        //get the desired class empty/default values
+        $skeleton = $this->getSkeleton($controller);
+
+        //if no random data should be generated, return json
+        if (!$generateRandomData) {
+            return $skeleton;
+        }
+
+        //TODO: generate fake data using modelFactories
+        return '';
     }
 }
