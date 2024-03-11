@@ -1,9 +1,11 @@
 <script>
 import {store} from "@/store";
 import ClearLinkingsModalComponent from "@/components/ClearLinkingsModalComponent.vue";
+import PayloadGeneratorModal from "@/components/payload_generator/PayloadGeneratorModalComponent.vue";
 
 export default {
   components: {
+    PayloadGeneratorModal,
     ClearLinkingsModalComponent
   },
   data() {
@@ -36,13 +38,14 @@ export default {
       const message = this.axios.post(url, this.postData)
       store.resultData = (await message).data
       store.requestTime = parseFloat((await message).headers['x-request-time']).toFixed(2)
-    },
+    }
   }
 }
 </script>
 
 <template>
   <ClearLinkingsModalComponent @clearConfirmationEvent="handleClearConfirmationEvent"/>
+  <PayloadGeneratorModal/>
   <div class="row ">
     <div class="col">
       <div class="d-flex justify-content-between">
@@ -80,6 +83,8 @@ export default {
                     <button class="btn btn-warning w-100" @click="startPostRequest('triggerAck')">Trigger Ack</button>
                     <button class="btn btn-primary w-100" @click="startPostRequest('getSkeleton')">Get Skeleton</button>
                     <button class="btn btn-primary w-100" @click="startPostRequest('pushTest')">Push Test</button>
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#payloadModal">Generate Payload
+                    </button>
                   </div>
                 </li>
               </ul>

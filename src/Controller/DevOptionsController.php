@@ -38,10 +38,11 @@ class DevOptionsController extends ConnectorTesterClient
 
     /**
      * @param string $controller
+     * @param bool $payloadGenerator
      * @return string
      * @throws \JsonException
      */
-    public function getSkeleton(string $controller): string
+    public function getSkeleton(string $controller, bool $payloadGenerator = false): string
     {
         $className = \sprintf('Jtl\\Connector\\Core\\Model\\%s', \ucfirst($controller));
 
@@ -49,6 +50,10 @@ class DevOptionsController extends ConnectorTesterClient
             $class = new $className();
         } catch (\Error $e) {
             return 'No Model available for ' . $controller . ' controller';
+        }
+
+        if ($payloadGenerator) {
+            return $this->getArrayFillingSerializer()->serialize($class, 'json');
         }
 
         return \json_encode(
@@ -109,7 +114,7 @@ class DevOptionsController extends ConnectorTesterClient
     public function generatePayload(string $controller, bool $generateRandomData): string
     {
         //get the desired class empty/default values
-        $skeleton = $this->getSkeleton($controller);
+        $skeleton = $this->getSkeleton($controller, true);
 
         //if no random data should be generated, return json
         if (!$generateRandomData) {

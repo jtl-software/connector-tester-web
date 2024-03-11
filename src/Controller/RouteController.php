@@ -358,7 +358,8 @@ class RouteController
             $this->client
         );
         $response->getBody()->write(
-            $devController->generatePayload($attributes['controller'], $attributes['generateRandomData'])
+            //check if $attributes['generateRandomData'] is equal to string 'false'
+            $devController->generatePayload($attributes['controller'], !($attributes['generateRandomData'] === 'false'))
         );
 
         return $response;
