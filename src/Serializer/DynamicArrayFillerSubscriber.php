@@ -38,9 +38,19 @@ class DynamicArrayFillerSubscriber implements EventSubscriberInterface
             if (\is_array($propertyValue) && empty($propertyValue)) {
                 $className = $propertyMetadata->type['params'][0]['name'];
                 // Instantiate property Object and use setter
-                $newObject = new $className();
-                $setter    = 'set' . \ucfirst($propertyName);
-                $object->$setter($newObject);
+                $setter = 'set' . \ucfirst($propertyName);
+                // Workaround for deliveryNoteTrackingList->code property
+                if ($propertyMetadata->type['params'][0]['name'] === 'string') {
+                    $object->$setter('');
+                } else {
+                    $newObject = new $className();
+                    // Workaround till https://jira.jtl-software.de/browse/CO-2560 is fixed
+                    if ($className === 'Jtl\Connector\Core\Model\ProductVariationValueInvisibility') {
+                        $object->$setter([$newObject]);
+                    } else {
+                        $object->$setter($newObject);
+                    }
+                }
             }
         }
     }

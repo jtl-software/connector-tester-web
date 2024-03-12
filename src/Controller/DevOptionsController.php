@@ -44,6 +44,11 @@ class DevOptionsController extends ConnectorTesterClient
      */
     public function getSkeleton(string $controller, bool $payloadGenerator = false): string
     {
+        // imageClasses share the same model, they just differentiate in "relationType" property.
+        // that's why we're choosing categoryImage as default
+        if ($controller === 'image') {
+            $controller = 'categoryImage';
+        }
         $className = \sprintf('Jtl\\Connector\\Core\\Model\\%s', \ucfirst($controller));
 
         try {
