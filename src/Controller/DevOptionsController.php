@@ -144,7 +144,10 @@ class DevOptionsController extends ConnectorTesterClient
 
         //if the optional property is not selected, make it an empty array
         foreach ($optionalProperties as $key => $optionalProperty) {
-            if (\array_key_exists($key, $unfilteredArray[0]) && $optionalProperty === 'false') {
+            if (
+                \array_key_exists($key, $unfilteredArray[0])
+                && !\filter_var($optionalProperty, \FILTER_VALIDATE_BOOL)
+            ) {
                 $unfilteredArray[0][$key] = [];
             }
         }

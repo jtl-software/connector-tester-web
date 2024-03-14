@@ -42,7 +42,7 @@ class RouteController
     /**
      * @param ServerRequestInterface $request
      *
-     * @return array<string, string>
+     * @return array<string, scalar|array>
      */
     private function getAttributes(ServerRequestInterface $request): array
     {
@@ -360,9 +360,8 @@ class RouteController
         $response->getBody()->write(
             $devController->generatePayload(
                 $attributes['controller'],
-                //check if $attributes['generateRandomData'] is not equal to string 'false'
-                !($attributes['generateRandomData'] === 'false'),
-                $attributes['options']
+                \filter_var($attributes['generateRandomData'], \FILTER_VALIDATE_BOOL),
+                $attributes['options'] ?? []
             )
         );
 
