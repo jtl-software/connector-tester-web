@@ -15,7 +15,6 @@ export default {
         crossSelling: {},
         customer: {},
         deliveryNote: {},
-        image: {},
         manufacturer: {},
         product: {
           attributes: false,
