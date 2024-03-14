@@ -326,7 +326,7 @@ class RouteController
      */
     public function clearControllerLinkings(
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface      $response
     ): ResponseInterface {
         $attributes         = $this->getAttributes($request);
         $linkingsController = new LinkingsController(
@@ -349,7 +349,7 @@ class RouteController
      */
     public function generatePayload(
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface      $response
     ): ResponseInterface {
         $attributes    = $this->getAttributes($request);
         $devController = new DevOptionsController(
@@ -358,8 +358,12 @@ class RouteController
             $this->client
         );
         $response->getBody()->write(
-            //check if $attributes['generateRandomData'] is equal to string 'false'
-            $devController->generatePayload($attributes['controller'], !($attributes['generateRandomData'] === 'false'))
+            $devController->generatePayload(
+                $attributes['controller'],
+                //check if $attributes['generateRandomData'] is not equal to string 'false'
+                !($attributes['generateRandomData'] === 'false'),
+                $attributes['options']
+            )
         );
 
         return $response;

@@ -58,7 +58,7 @@ export default {
       <div class="d-flex align-items-center">
         <p class="m-0">object {{ key }}</p>
         <!-- only show delete button if there is more than one entry -->
-        <button class="btn btn-danger py-0 px-2 ms-2" @click="removeObject(key)" v-if="key > 0">-</button>
+        <button class="btn btn-danger py-0 px-2 ms-2" @click="removeObject(key)" v-if="key >= 0">-</button>
         <!-- only show add button on last entry -->
         <button class="btn btn-primary py-0 px-2 ms-2" @click="copyObject(key)" v-if="key === data.length - 1">+
         </button>

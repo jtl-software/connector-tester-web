@@ -38,11 +38,10 @@ class DevOptionsController extends ConnectorTesterClient
 
     /**
      * @param string $controller
-     * @param bool $payloadGenerator
      * @return string
      * @throws \JsonException
      */
-    public function getSkeleton(string $controller, bool $payloadGenerator = false): string
+    public function getSkeleton(string $controller): string
     {
         // imageClasses share the same model, they just differentiate in "relationType" property.
         // that's why we're choosing categoryImage as default
@@ -55,10 +54,6 @@ class DevOptionsController extends ConnectorTesterClient
             $class = new $className();
         } catch (\Error $e) {
             return 'No Model available for ' . $controller . ' controller';
-        }
-
-        if ($payloadGenerator) {
-            return $this->getArrayFillingSerializer()->serialize($class, 'json');
         }
 
         return \json_encode(
@@ -113,20 +108,47 @@ class DevOptionsController extends ConnectorTesterClient
     /**
      * @param string $controller
      * @param bool $generateRandomData
+     * @param array $optionalProperties
      * @return string
      * @throws \JsonException
      */
-    public function generatePayload(string $controller, bool $generateRandomData): string
+    public function generatePayload(string $controller, bool $generateRandomData, array $optionalProperties): string
     {
         //get the desired class empty/default values
-        $skeleton = $this->getSkeleton($controller, true);
+        $skeleton = $this->getSkeleton($controller);
 
         //if no random data should be generated, return json
         if (!$generateRandomData) {
-            return $skeleton;
+            return $this->filterOptionalProperties($skeleton, $optionalProperties);
         }
 
-        //TODO: generate fake data using modelFactories
-        return '';
+        $factoryName = \sprintf('Jtl\\Connector\\Core\\Model\\Generator\\%sFactory', \ucfirst($controller));
+
+        try {
+            $factory = new $factoryName();
+        } catch (\RuntimeException $e) {
+            return $e->getMessage();
+        }
+
+        return $this->filterOptionalProperties(\json_encode($factory->makeArray(1)), $optionalProperties);
+    }
+
+    /**
+     * @param string $payload
+     * @param array $optionalProperties
+     * @return string
+     */
+    public function filterOptionalProperties(string $payload, array $optionalProperties): string
+    {
+        $unfilteredArray = \json_decode($payload, 1);
+
+        //if the optional property is not selected, make it an empty array
+        foreach ($optionalProperties as $key => $optionalProperty) {
+            if (\array_key_exists($key, $unfilteredArray[0]) && $optionalProperty === 'false') {
+                $unfilteredArray[0][$key] = [];
+            }
+        }
+
+        return \json_encode($unfilteredArray);
     }
 }

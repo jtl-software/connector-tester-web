@@ -5,19 +5,37 @@ import FormComponent from "@/components/payload_generator/FormComponent.vue";
 export default {
   data() {
     return {
-      controllers: [
-        'category',
-        'crossSelling',
-        'customer',
-        'deliveryNote',
-        'image',
-        'manufacturer',
-        'product',
-        'productPrice',
-        'productStockLevel',
-        'specific',
-        'statusChange'
-      ],
+      //a list of all controllers and their optional properties
+      controllers: {
+        category: {
+          attributes: false,
+          customerGroups: false,
+          invisibilities: false
+        },
+        crossSelling: {},
+        customer: {},
+        deliveryNote: {},
+        image: {},
+        manufacturer: {},
+        product: {
+          attributes: false,
+          checksums: false,
+          configGroups: false,
+          customerGroupPackagingQuantities: false,
+          fileDownloads: false,
+          invisibilities: false,
+          mediaFiles: false,
+          partsLists: false,
+          specialPrices: false,
+          specifics: false,
+          variations: false,
+          warehouseInfo: false
+        },
+        productPrice: {},
+        productStockLevel: {},
+        specific: {},
+        statusChange: {}
+      },
       generateRandomData: false,
       store,
       jsonData: '',
@@ -30,7 +48,8 @@ export default {
         connectorUrl: store.url,
         connectorToken: store.token,
         controller: store.controller,
-        generateRandomData: this.generateRandomData
+        generateRandomData: this.generateRandomData,
+        options: this.controllers[this.store.controller]
       }
     }
   },
@@ -67,9 +86,24 @@ export default {
                 </label>
               </div>
               <select class="form-select" id="payloadController" name="controller" v-model="store.controller">
-                <option v-for="controller in controllers" :value="controller">{{ controller }}</option>
+                <option v-for="(value, controller) in controllers" :value="controller">{{ controller }}</option>
               </select>
             </div>
+            <hr>
+            <div class="my-2">
+              <h5>Optional Properties</h5>
+            </div>
+            <div class="d-flex flex-column flex-grow-1 mt-2">
+              <div class="form-check">
+                <div v-for="(value, key) in controllers[store.controller]">
+                  <input class="form-check-input" type="checkbox" :id="key" v-model="controllers[store.controller][key]">
+                  <label class="form-check-label" :for="key" >
+                    {{ key }}
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr>
             <div class="d-flex justify-content-end mt-3">
               <button class="btn btn-success" @click="getFormData">Load Form</button>
             </div>
