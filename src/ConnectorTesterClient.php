@@ -54,14 +54,12 @@ class ConnectorTesterClient extends ConnectorClient
      */
     protected function getArrayFillingSerializer(): Serializer
     {
-        if (\is_null($this->serializer)) {
-            AnnotationRegistry::registerLoader('class_exists');
-            $this->serializer = SerializerBuilder::create()
-                ->configureListeners(function (EventDispatcher $dispatcher) {
-                    $dispatcher->addSubscriber(new DynamicArrayFillerSubscriber());
-                })
-                ->build();
-        }
+        AnnotationRegistry::registerLoader('class_exists');
+        $this->serializer = SerializerBuilder::create()
+            ->configureListeners(function (EventDispatcher $dispatcher) {
+                $dispatcher->addSubscriber(new DynamicArrayFillerSubscriber());
+            })
+            ->build();
 
         return $this->serializer;
     }

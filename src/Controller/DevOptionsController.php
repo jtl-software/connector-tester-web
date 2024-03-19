@@ -4,6 +4,7 @@ namespace Jtl\ConnectorTester\Controller;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Core\Model\Ack;
+use Jtl\Connector\Core\Model\Generator\AbstractModelFactory;
 use Jtl\Connector\Core\Model\Identity;
 use Jtl\Connector\Core\Model\ProductImage;
 use Jtl\ConnectorTester\ConnectorTesterClient;
@@ -108,7 +109,7 @@ class DevOptionsController extends ConnectorTesterClient
     /**
      * @param string $controller
      * @param bool $generateRandomData
-     * @param array $optionalProperties
+     * @param array<string, string> $optionalProperties
      * @return string
      * @throws \JsonException
      */
@@ -125,22 +126,32 @@ class DevOptionsController extends ConnectorTesterClient
         $factoryName = \sprintf('Jtl\\Connector\\Core\\Model\\Generator\\%sFactory', \ucfirst($controller));
 
         try {
+            /** @var AbstractModelFactory $factory */
             $factory = new $factoryName();
         } catch (\RuntimeException $e) {
             return $e->getMessage();
         }
 
-        return $this->filterOptionalProperties(\json_encode($factory->makeArray(1)), $optionalProperties);
+        return $this->filterOptionalProperties(
+            \json_encode($factory->makeArray(1), \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR),
+            $optionalProperties
+        );
     }
 
     /**
      * @param string $payload
-     * @param array $optionalProperties
+     * @param array<string, string> $optionalProperties
      * @return string
+     * @throws \JsonException
      */
     public function filterOptionalProperties(string $payload, array $optionalProperties): string
     {
-        $unfilteredArray = \json_decode($payload, 1);
+        $unfilteredArray = \json_decode($payload, true);
+
+        //double check so phpstan shuts up
+        if (!\is_array($unfilteredArray)) {
+            throw new \RuntimeException('Expected an array from JSON payload');
+        }
 
         //if the optional property is not selected, make it an empty array
         foreach ($optionalProperties as $key => $optionalProperty) {
@@ -152,6 +163,6 @@ class DevOptionsController extends ConnectorTesterClient
             }
         }
 
-        return \json_encode($unfilteredArray);
+        return \json_encode($unfilteredArray, \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
     }
 }

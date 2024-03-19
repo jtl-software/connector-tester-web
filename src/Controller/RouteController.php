@@ -29,6 +29,7 @@ class RouteController
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
+     * @throws \JsonException
      */
     public function authenticate(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -41,11 +42,11 @@ class RouteController
 
     /**
      * @param ServerRequestInterface $request
-     * @return array<string, scalar|array>
+     * @return array<string, string>
      */
     private function getAttributes(ServerRequestInterface $request): array
     {
-        /** @var array<string, scalar|array> $attributes */
+        /** @var array<string, string> $attributes */
         $attributes = $request->getParsedBody();
         return $attributes;
     }
@@ -356,11 +357,14 @@ class RouteController
             $attributes['connectorUrl'],
             $this->client
         );
+
+        /** @var array<string, string>|null $options */
+        $options = $attributes['options'] ?? null;
         $response->getBody()->write(
             $devController->generatePayload(
                 $attributes['controller'],
                 \filter_var($attributes['generateRandomData'], \FILTER_VALIDATE_BOOL),
-                $attributes['options'] ?? []
+                $options ?? []
             )
         );
 
