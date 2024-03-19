@@ -41,12 +41,11 @@ class RouteController
 
     /**
      * @param ServerRequestInterface $request
-     *
      * @return array<string, scalar|array>
      */
     private function getAttributes(ServerRequestInterface $request): array
     {
-        /** @var array<string, string> $attributes */
+        /** @var array<string, scalar|array> $attributes */
         $attributes = $request->getParsedBody();
         return $attributes;
     }

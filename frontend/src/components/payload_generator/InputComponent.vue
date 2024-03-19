@@ -4,7 +4,8 @@ import {store} from "@/store";
 export default {
   data() {
     return {
-      store
+      store,
+      types: {}
     }
   },
   props: {
@@ -28,6 +29,12 @@ export default {
     },
     removeObject(index) {
       this.data.splice(index, 1)
+    },
+    getType(key, value) {
+      if (this.types[key] === undefined) {
+        this.types[key] = typeof value
+      }
+      return this.types[key]
     }
   }
 }
@@ -37,21 +44,21 @@ export default {
   <!-- Iterate through every value in data -->
   <div v-for="(value, key) in data">
     <!-- if value is a boolean, then create an input with type checkbox -->
-    <div v-if="typeof value === 'boolean'" class="d-flex flex-row justify-content-between align-items-center mt-2">
-      <p class="m-0">{{ typeof value }} {{ key }}</p>
+    <div v-if="getType(key, value) === 'boolean'" class="d-flex flex-row justify-content-between align-items-center mt-2">
+      <p class="m-0">{{ getType(key, value) }} {{ key }}</p>
       <input class="form-check-input" type="checkbox" :value="value" v-model="data[key]">
     </div>
     <!-- if value is a string, create an input with type text -->
-    <div v-else-if="typeof value === 'string'" class="d-flex flex-row justify-content-between align-items-center mt-2">
+    <div v-else-if="getType(key, value) === 'string'" class="d-flex flex-row justify-content-between align-items-center mt-2">
       <!-- workaround for Identity Object -->
-      <p class="m-0">{{ typeof value }} {{ key === 0 ? 'endpointId' : key }}</p>
+      <p class="m-0">{{ getType(key, value) }} {{ key === 0 ? 'endpointId' : key }}</p>
       <input class="form-control form-control-sm" type="text" style="width: 40em" :value="value" v-model="data[key]">
     </div>
     <!-- if value is a number, create an input with type number -->
-    <div v-else-if="typeof value === 'number'" class="d-flex flex-row justify-content-between align-items-center mt-2">
+    <div v-else-if="getType(key, value) === 'number'" class="d-flex flex-row justify-content-between align-items-center mt-2">
       <!-- workaround for Identity Object -->
-      <p class="m-0">{{ typeof value }} {{ key === 1 ? 'hostId' : key }}</p>
-      <input class="form-control form-control-sm" type="number" style="width: 40em" :value="value" v-model="data[key]">
+      <p class="m-0">{{ getType(key, value) }} {{ key === 1 ? 'hostId' : key }}</p>
+      <input class="form-control form-control-sm" type="number" style="width: 40em" :value="value" v-model.number="data[key]">
     </div>
     <!-- for everything else, create a new InputComponent via recursion -->
     <div v-else-if="isObject(value)">
