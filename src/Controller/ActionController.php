@@ -4,9 +4,9 @@ namespace Jtl\ConnectorTester\Controller;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Jtl\Connector\Core\Definition\RpcMethod;
-use Jtl\ConnectorTester\TimedClient;
+use Jtl\ConnectorTester\ConnectorTesterClient;
 
-class ActionController extends TimedClient
+class ActionController extends ConnectorTesterClient
 {
     /**
      * @param string $controller

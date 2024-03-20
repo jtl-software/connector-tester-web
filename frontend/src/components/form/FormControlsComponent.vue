@@ -12,7 +12,7 @@ export default {
         customerOrder: ['Pull', 'Stats'],
         deliveryNote: ['Push'],
         globalData: ['Pull', 'Stats'],
-        image: ['Pull', 'Push', 'Delete', 'Stats'],
+        image: ['Pull', 'Delete', 'Stats'],
         manufacturer: ['Pull', 'Push', 'Delete', 'Stats'],
         payment: ['Pull', 'Stats'],
         product: ['Pull', 'Push', 'Delete', 'Stats'],

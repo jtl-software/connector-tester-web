@@ -2,15 +2,12 @@
 
 namespace Jtl\ConnectorTester\Controller;
 
-use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
-use Jtl\Connector\Client\ConnectorClient;
 use Jtl\Connector\Client\ResponseException;
-use Jtl\Connector\Core\Model\Identities;
 use Jtl\Connector\Core\Model\Identity;
-use Jtl\ConnectorTester\TimedClient;
+use Jtl\ConnectorTester\ConnectorTesterClient;
 
-class LinkingsController extends TimedClient
+class LinkingsController extends ConnectorTesterClient
 {
     /**
      * @return string

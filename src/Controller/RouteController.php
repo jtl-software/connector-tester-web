@@ -29,6 +29,7 @@ class RouteController
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
+     * @throws \JsonException
      */
     public function authenticate(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
@@ -41,7 +42,6 @@ class RouteController
 
     /**
      * @param ServerRequestInterface $request
-     *
      * @return array<string, string>
      */
     private function getAttributes(ServerRequestInterface $request): array
@@ -326,7 +326,7 @@ class RouteController
      */
     public function clearControllerLinkings(
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface      $response
     ): ResponseInterface {
         $attributes         = $this->getAttributes($request);
         $linkingsController = new LinkingsController(
@@ -336,6 +336,36 @@ class RouteController
         );
         $response->getBody()->write(
             $linkingsController->clearControllerLinkings($attributes['controller'])
+        );
+
+        return $response;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \JsonException
+     */
+    public function generatePayload(
+        ServerRequestInterface $request,
+        ResponseInterface      $response
+    ): ResponseInterface {
+        $attributes    = $this->getAttributes($request);
+        $devController = new DevOptionsController(
+            $attributes['connectorToken'],
+            $attributes['connectorUrl'],
+            $this->client
+        );
+
+        /** @var array<string, string>|null $options */
+        $options = $attributes['options'] ?? null;
+        $response->getBody()->write(
+            $devController->generatePayload(
+                $attributes['controller'],
+                \filter_var($attributes['generateRandomData'], \FILTER_VALIDATE_BOOL),
+                $options ?? []
+            )
         );
 
         return $response;

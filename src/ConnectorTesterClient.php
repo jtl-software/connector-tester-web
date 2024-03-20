@@ -2,11 +2,16 @@
 
 namespace Jtl\ConnectorTester;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
+use JMS\Serializer\EventDispatcher\EventDispatcher;
+use JMS\Serializer\Serializer;
 use Jtl\Connector\Client\ConnectorClient;
+use Jtl\Connector\Core\Serializer\SerializerBuilder;
+use Jtl\ConnectorTester\Serializer\DynamicArrayFillerSubscriber;
 
-class TimedClient extends ConnectorClient
+class ConnectorTesterClient extends ConnectorClient
 {
     /**
      * @param string $token
@@ -32,8 +37,8 @@ class TimedClient extends ConnectorClient
      */
     protected function request(
         string $method,
-        array $params = [],
-        bool $authRequest = false,
+        array  $params = [],
+        bool   $authRequest = false,
         string $zipFile = null
     ): mixed {
         $start  = \microtime(true);
@@ -42,5 +47,20 @@ class TimedClient extends ConnectorClient
         $time   = ($end * 1000) - ($start * 1000);
         \header('X-Request-Time: ' . $time);
         return $result;
+    }
+
+    /**
+     * @return Serializer
+     */
+    protected function getArrayFillingSerializer(): Serializer
+    {
+        AnnotationRegistry::registerLoader('class_exists');
+        $this->serializer = SerializerBuilder::create()
+            ->configureListeners(function (EventDispatcher $dispatcher) {
+                $dispatcher->addSubscriber(new DynamicArrayFillerSubscriber());
+            })
+            ->build();
+
+        return $this->serializer;
     }
 }
