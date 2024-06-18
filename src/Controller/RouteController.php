@@ -267,6 +267,25 @@ class RouteController
      * @return ResponseInterface
      * @throws \JsonException
      */
+    public function manualAck(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $attributes    = $this->getAttributes($request);
+        $devController = new DevOptionsController(
+            $attributes['connectorToken'],
+            $attributes['connectorUrl'],
+            $this->client
+        );
+        $response->getBody()->write($devController->manualAck($attributes['controller'], $attributes['payload']));
+
+        return $response;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \JsonException
+     */
     public function getSkeleton(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $attributes    = $this->getAttributes($request);

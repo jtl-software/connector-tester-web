@@ -64,6 +64,8 @@ class Kernel
 
         $app->post('/triggerAck', [RouteController::class, 'triggerAck']);
 
+        $app->post('/manualAck', [RouteController::class, 'manualAck']);
+
         $app->post('/getSkeleton', [RouteController::class, 'getSkeleton']);
 
         $app->post('/pushTest', [RouteController::class, 'pushTest']);
