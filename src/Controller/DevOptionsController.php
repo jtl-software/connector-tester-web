@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jtl\ConnectorTester\Controller;
 
 use GuzzleHttp\Exception\GuzzleException;
@@ -46,6 +48,10 @@ class DevOptionsController extends ConnectorTesterClient
     {
         $identities = [];
         $models     = \json_decode($payload, true);
+
+        if (empty($models) || !\is_array($models)) {
+            return 'No data or wrong format provided';
+        }
 
         foreach ($models as $model) {
             $id                        = !\array_key_exists(1, $model) ? \rand() : $model[1];
