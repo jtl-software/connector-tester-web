@@ -128,6 +128,18 @@ Example payload:
 ### Trigger Ack
 This will send an ACK to all previously pulled data. Data needs to be pulled first!
 
+### Manual Ack
+This will send an ACK for chosen data using the selected controller. It needs a payload.
+First Entry of the array needs to be the endpoint id. Second entry is optional, it's used for the host id.
+
+Example payload:
+```
+[
+    ["123", 1234], --> endpoint id and host id are given
+    ["321"] --> only endpoint id is given, host id will be randomly generated
+]
+```
+
 ### Get Skeleton
 The Get Skeleton method will return an empty model of the previously selected controller. It's useful if you want to build a payload for the push method.
 

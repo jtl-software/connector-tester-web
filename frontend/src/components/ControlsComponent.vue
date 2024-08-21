@@ -81,6 +81,7 @@ export default {
                 <li class="mx-2">
                   <div class="btn-group-vertical w-100">
                     <button class="btn btn-warning w-100" @click="startPostRequest('triggerAck')">Trigger Ack</button>
+                    <button class="btn btn-warning w-100" @click="startPostRequest('manualAck')">Manual Ack</button>
                     <button class="btn btn-primary w-100" @click="startPostRequest('getSkeleton')">Get Skeleton</button>
                     <button class="btn btn-primary w-100" @click="startPostRequest('pushTest')">Push Test</button>
                     <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#payloadModal">Generate Payload

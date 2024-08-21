@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jtl\ConnectorTester\Controller;
 
 use Jtl\Connector\Client\ResponseException;

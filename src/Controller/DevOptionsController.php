@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jtl\ConnectorTester\Controller;
 
 use GuzzleHttp\Exception\GuzzleException;
@@ -33,6 +35,31 @@ class DevOptionsController extends ConnectorTesterClient
         $ack = new Ack();
         $ack->setIdentities($identities);
 
+        return \json_encode($this->ack($ack), \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * @param string $controller
+     * @param string $payload
+     * @return string
+     * @throws \JsonException
+     */
+    public function manualAck(string $controller, string $payload): string
+    {
+        $identities = [];
+        $models     = \json_decode($payload, true);
+
+        if (empty($models) || !\is_array($models)) {
+            return 'No data or wrong format provided';
+        }
+
+        foreach ($models as $model) {
+            $id                        = !\array_key_exists(1, $model) ? \rand() : $model[1];
+            $identity                  = new Identity($model[0], $id);
+            $identities[$controller][] = $identity;
+        }
+        $ack = new Ack();
+        $ack->setIdentities($identities);
 
         return \json_encode($this->ack($ack), \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
     }

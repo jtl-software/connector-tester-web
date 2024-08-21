@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jtl\ConnectorTester\Controller;
 
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
@@ -35,7 +38,7 @@ class Kernel
     }
 
     /**
-     * @param App $app
+     * @param App<ContainerInterface|null> $app
      * @return void
      */
     private function registerRoutes(App $app): void
@@ -63,6 +66,8 @@ class Kernel
         $app->post('/Init', [RouteController::class, 'init']);
 
         $app->post('/triggerAck', [RouteController::class, 'triggerAck']);
+
+        $app->post('/manualAck', [RouteController::class, 'manualAck']);
 
         $app->post('/getSkeleton', [RouteController::class, 'getSkeleton']);
 
