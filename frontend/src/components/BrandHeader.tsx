@@ -20,9 +20,10 @@ export function BrandHeader() {
       }}
     >
       <JtlLogo style={{ height: 28, width: 'auto', flex: '0 0 auto' }} />
-      <span style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>
-        Connector Tester
-      </span>
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+        <span style={{ fontSize: 13, fontWeight: 600 }}>Connector Tester</span>
+        <span style={{ fontSize: 10, opacity: 0.6 }}>v{__APP_VERSION__}</span>
+      </div>
     </div>
   )
 }

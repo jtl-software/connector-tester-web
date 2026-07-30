@@ -2,12 +2,22 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
+import { readFileSync } from 'node:fs'
+
+const pkg = JSON.parse(readFileSync(fileURLToPath(new URL('./package.json', import.meta.url)), 'utf-8'))
 
 export default defineConfig({
   base: '/frontend/',
   build: {
     outDir: '../public/frontend',
     emptyOutDir: true
+  },
+  // Exposes the package version to the app at build time so the UI can
+  // display which build is actually running (see BrandHeader.tsx). A
+  // hardcoded version string would drift on the next release, silently
+  // reintroducing the "which build am I on" problem this solves.
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version)
   },
   plugins: [react()],
   resolve: {
