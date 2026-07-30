@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { ThemeSwitcher, ThemeProvider } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
+import { BrandHeader } from '@/components/BrandHeader'
 import { ConnectionPanel } from '@/features/connection/ConnectionPanel'
 import { HistoryList } from '@/features/history/HistoryList'
 import { SavedPayloadList } from '@/features/payload/SavedPayloadList'
@@ -22,6 +23,7 @@ export default function App() {
             display: 'flex', flexDirection: 'column'
           }}
         >
+          <BrandHeader />
           <ConnectionPanel />
           <HistoryList />
           <SavedPayloadList />
