@@ -14,6 +14,14 @@ export default defineConfig({
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }
   },
   test: {
+    // NOTE: on Node 24+, Node's built-in Web Storage shadows jsdom's
+    // localStorage/sessionStorage and lacks `.clear()`, which many tests
+    // rely on. This project's `npm test` / `npm run test:watch` scripts set
+    // NODE_OPTIONS=--no-experimental-webstorage via cross-env to disable
+    // Node's built-in implementation before it can shadow jsdom's. Running
+    // `npx vitest run` directly (bypassing the npm script) skips that flag
+    // and fails with "localStorage.clear is not a function". Always go
+    // through the npm scripts, or set that env var yourself.
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test-setup.ts'],

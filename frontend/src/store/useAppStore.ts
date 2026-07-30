@@ -15,7 +15,6 @@ interface AppState {
   result: ApiResult | null
   history: HistoryEntry[]
   payloads: SavedPayload[]
-  busy: boolean
 
   init: () => Promise<void>
   setConnections: (list: Connection[]) => void
@@ -26,7 +25,6 @@ interface AppState {
   setLimit: (n: number) => void
   setPayload: (p: string) => void
   setResult: (r: ApiResult | null) => void
-  setBusy: (v: boolean) => void
   addHistory: (e: HistoryEntry) => Promise<void>
   refreshHistory: () => Promise<void>
   setPayloads: (list: SavedPayload[]) => void
@@ -43,7 +41,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   result: null,
   history: [],
   payloads: [],
-  busy: false,
 
   init: async () => {
     migrateLegacyConnections()
@@ -74,7 +71,6 @@ export const useAppStore = create<AppState>((set, get) => ({
   setLimit: (n) => set({ limit: Number.isFinite(n) && n > 0 ? n : 100 }),
   setPayload: (p) => set({ payload: p }),
   setResult: (r) => set({ result: r }),
-  setBusy: (v) => set({ busy: v }),
 
   addHistory: async (e) => {
     await appendHistory(e)
