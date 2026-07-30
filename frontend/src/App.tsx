@@ -3,6 +3,7 @@ import { ThemeSwitcher, ThemeProvider } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
 import { ConnectionPanel } from '@/features/connection/ConnectionPanel'
 import { HistoryList } from '@/features/history/HistoryList'
+import { SavedPayloadList } from '@/features/payload/SavedPayloadList'
 import { RequestToolbar } from '@/features/request/RequestToolbar'
 import { PayloadPane } from '@/features/payload/PayloadPane'
 import { ResponsePane } from '@/features/response/ResponsePane'
@@ -23,6 +24,7 @@ export default function App() {
         >
           <ConnectionPanel />
           <HistoryList />
+          <SavedPayloadList />
           <div style={{ flex: 1 }} />
           <div style={{ padding: 12, borderTop: '1px solid rgba(128,128,128,.3)' }}>
             <ThemeSwitcher variant="dropdown" />

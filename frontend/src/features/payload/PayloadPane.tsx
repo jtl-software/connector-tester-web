@@ -31,6 +31,27 @@ export function PayloadPane() {
         </span>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 6 }}>
           <Button label="Skeleton" size="sm" variant="ghost" disabled={!connected || busy} onClick={() => void loadSkeleton()} />
+          <Button
+            label="Save"
+            size="sm"
+            variant="ghost"
+            disabled={!payload.trim()}
+            onClick={() => {
+              const name = window.prompt('Name this payload')
+              if (!name?.trim()) return
+              const s = useAppStore.getState()
+              s.setPayloads([
+                ...s.payloads.filter((p) => p.name !== name.trim()),
+                {
+                  id: crypto.randomUUID(),
+                  name: name.trim(),
+                  controller: s.controller,
+                  body: s.payload,
+                  updatedAt: Date.now()
+                }
+              ])
+            }}
+          />
         </div>
       </header>
 
