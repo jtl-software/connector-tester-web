@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-editor'
 import { useAppStore } from '@/store/useAppStore'
+import { useContainerHeight } from '@/hooks/useContainerHeight'
 
 function countItems(data: unknown): string {
   if (Array.isArray(data)) return `${data.length} items`
@@ -14,6 +15,7 @@ function countItems(data: unknown): string {
 export function ResponsePane() {
   const result = useAppStore((s) => s.result)
   const [filter, setFilter] = useState('')
+  const { ref: editorWrapRef, height: editorHeight } = useContainerHeight<HTMLDivElement>()
 
   const text = result ? JSON.stringify(result.data, null, 2) : ''
   const shown = filter
@@ -56,8 +58,8 @@ export function ResponsePane() {
         />
       </header>
 
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <CodeEditor value={shown} defaultLanguage="json" height="100%" readOnly />
+      <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
+        <CodeEditor value={shown} defaultLanguage="json" height={editorHeight} readOnly />
       </div>
     </section>
   )

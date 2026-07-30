@@ -19,21 +19,29 @@ interface Props {
 const EMPTY: Connection = { name: '', url: '', token: '' }
 
 export function ManageConnectionsDialog({ open, onOpenChange }: Props) {
-  const { connections, setConnections } = useAppStore()
+  const { connections, setConnections, activeConnection, setActiveConnection } = useAppStore()
   const [draft, setDraft] = useState<Connection>(EMPTY)
   const [editing, setEditing] = useState<string | null>(null)
 
   function save() {
     if (!draft.name.trim()) return
-    const next = connections.filter((c) => c.name !== editing && c.name !== draft.name.trim())
-    next.push({ ...draft, name: draft.name.trim() })
+    const name = draft.name.trim()
+    const next = connections.filter((c) => c.name !== editing && c.name !== name)
+    next.push({ ...draft, name })
     setConnections(next)
+    // Renaming the active connection would otherwise leave activeConnection
+    // pointing at a name that no longer exists, silently disabling
+    // Authenticate with no indication why.
+    if (editing && editing !== name && activeConnection === editing) {
+      setActiveConnection(name)
+    }
     setDraft(EMPTY)
     setEditing(null)
   }
 
   function remove(name: string) {
     setConnections(connections.filter((c) => c.name !== name))
+    if (activeConnection === name) setActiveConnection(null)
   }
 
   return (

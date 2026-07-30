@@ -59,4 +59,18 @@ describe('connection storage', () => {
     localStorage.setItem(CONNECTIONS_KEY, '{not json')
     expect(loadConnections()).toEqual([])
   })
+
+  it('does not resurrect legacy connections after the user deletes all of them', () => {
+    localStorage.setItem('shop-dev', JSON.stringify({ url: 'http://a', token: 'a1' }))
+    expect(migrateLegacyConnections()).toBe(1)
+    expect(loadConnections()).toHaveLength(1)
+
+    // The user deletes every connection. This writes "[]" (a present key,
+    // zero-length list) — it must not be indistinguishable from "never
+    // migrated" on the next reload.
+    saveConnections([])
+
+    expect(migrateLegacyConnections()).toBe(0)
+    expect(loadConnections()).toEqual([])
+  })
 })

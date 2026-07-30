@@ -24,7 +24,13 @@ export function ConnectionPanel() {
         payload: '',
         limit: 0
       })
-      setConnected(connected ? false : res.ok)
+      // AuthController::startAuth() catches auth failures itself and returns
+      // the plain string 'Error: …' with HTTP 200 — it never produces a
+      // non-2xx status for a failed authentication. res.ok only reflects the
+      // HTTP status, so a bad token would otherwise report "Connected".
+      const authFailed = typeof res.data === 'string' && res.data.trimStart().startsWith('Error:')
+      useAppStore.getState().setResult(res)
+      setConnected(connected ? false : res.ok && !authFailed)
     } finally {
       setBusy(false)
     }

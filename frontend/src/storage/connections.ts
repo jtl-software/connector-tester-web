@@ -32,7 +32,12 @@ function isLegacyConnection(value: unknown): value is { url: string; token: stri
  * Returns the number of connections imported.
  */
 export function migrateLegacyConnections(): number {
-  if (loadConnections().length > 0) return 0
+  // Guard on key *absence*, not "the list is empty". Deleting every saved
+  // connection writes "[]" via saveConnections(), which is a present key
+  // with length 0 — checking length would re-run the migration on every
+  // subsequent reload and resurrect connections the user deliberately
+  // deleted.
+  if (localStorage.getItem(CONNECTIONS_KEY) !== null) return 0
 
   const imported: Connection[] = []
 
