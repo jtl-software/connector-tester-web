@@ -4,7 +4,8 @@ import { clearHistory, type HistoryEntry } from '@/storage/history'
 import { ACTIONS, type Action, type ControllerName } from '@/types/domain'
 
 export function HistoryList() {
-  const { history, setController, setAction, setLimit, setPayload, setResult, refreshHistory } = useAppStore()
+  const { history, historyError, setController, setAction, setLimit, setPayload, setResult, refreshHistory } =
+    useAppStore()
 
   function restore(e: HistoryEntry) {
     const controller = e.controller as ControllerName
@@ -41,6 +42,23 @@ export function HistoryList() {
           />
         </div>
       </header>
+
+      {historyError && (
+        <div
+          role="alert"
+          title={historyError}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px',
+            fontSize: 10, background: 'rgba(220,38,38,.12)', color: '#dc2626',
+            borderBottom: '1px solid rgba(220,38,38,.3)'
+          }}
+        >
+          <span aria-hidden="true">⚠</span>
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            Last request could not be saved to history
+          </span>
+        </div>
+      )}
 
       <div style={{ overflowY: 'auto', minHeight: 0 }}>
         {history.length === 0 && (

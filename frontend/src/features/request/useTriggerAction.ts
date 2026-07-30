@@ -17,16 +17,25 @@ export function useTriggerAction() {
     const active = s.connections.find((c) => c.name === s.activeConnection)
     if (!active) return
 
+    const effectiveEndpoint = endpoint ?? s.action
+
     setBusy(true)
     try {
-      const res = await callAction(endpoint ?? s.action, {
+      const res = await callAction(effectiveEndpoint, {
         connectorUrl: active.url,
         connectorToken: active.token,
         controller: s.controller,
         action: s.action,
         payload: s.payload,
         limit: s.limit,
-        results: JSON.stringify(s.result?.data ?? ''),
+        // `results` (the previously-pulled data, re-serialised) is only read
+        // server-side by triggerAck (RouteController::triggerAck ->
+        // DevOptionsController::triggerAck), which needs it to acknowledge
+        // what was pulled. Every other endpoint ignores it. Sending it on
+        // every request meant a large Pull response got re-uploaded on every
+        // subsequent call, which can blow past PHP's post_max_size and make
+        // the request fail with no useful error.
+        ...(effectiveEndpoint === 'triggerAck' ? { results: JSON.stringify(s.result?.data ?? '') } : {}),
         ...extra
       })
 
@@ -38,7 +47,7 @@ export function useTriggerAction() {
         at: Date.now(),
         connectionName: active.name,
         controller: String(extra.controller ?? s.controller),
-        action: endpoint ?? s.action,
+        action: effectiveEndpoint,
         payload: s.payload,
         limit: s.limit,
         status: res.ok ? 'ok' : 'error',
@@ -50,13 +59,17 @@ export function useTriggerAction() {
       }
       try {
         await s.addHistory(entry)
+        s.setHistoryError(null)
       } catch (err) {
         // The request itself already succeeded and its response is already
         // rendered via setResult() above, so a failure to persist history
         // (e.g. IndexedDB quota/corruption) is survivable — but left
         // unhandled it escapes as an unhandled promise rejection since
         // callers invoke trigger() from onClick without awaiting/catching it.
+        // We still surface it (via historyError) so a silently dropped entry
+        // is visible instead of just vanishing from the History rail.
         console.error('Failed to save history entry', err)
+        s.setHistoryError(err instanceof Error ? err.message : String(err))
       }
     } finally {
       setBusy(false)

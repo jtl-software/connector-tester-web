@@ -33,6 +33,17 @@ describe('HistoryList', () => {
     expect(screen.getByText('200')).toBeInTheDocument()
   })
 
+  it('shows a warning banner when the last history write failed (defect 1)', () => {
+    useAppStore.setState({ historyError: 'IndexedDB quota exceeded' })
+    render(<HistoryList />)
+    expect(screen.getByRole('alert')).toHaveTextContent(/could not be saved to history/i)
+  })
+
+  it('shows no warning banner when there is no history error', () => {
+    render(<HistoryList />)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('restores controller, action, limit, and payload on click', async () => {
     useAppStore.setState({
       history: [entry({ controller: 'manufacturer', action: 'Push', limit: 7, payload: '{"z":9}' })]

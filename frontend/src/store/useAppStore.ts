@@ -15,6 +15,10 @@ interface AppState {
   result: ApiResult | null
   history: HistoryEntry[]
   payloads: SavedPayload[]
+  // Set when the most recent addHistory() call failed to persist (e.g.
+  // IndexedDB quota/corruption), cleared on the next successful one. Lets
+  // the History rail surface a dropped entry instead of silently losing it.
+  historyError: string | null
 
   init: () => Promise<void>
   setConnections: (list: Connection[]) => void
@@ -28,6 +32,7 @@ interface AppState {
   addHistory: (e: HistoryEntry) => Promise<void>
   refreshHistory: () => Promise<void>
   setPayloads: (list: SavedPayload[]) => void
+  setHistoryError: (message: string | null) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -41,6 +46,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   result: null,
   history: [],
   payloads: [],
+  historyError: null,
 
   init: async () => {
     migrateLegacyConnections()
@@ -82,5 +88,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   setPayloads: (list) => {
     savePayloads(list)
     set({ payloads: list })
-  }
+  },
+
+  setHistoryError: (message) => set({ historyError: message })
 }))
