@@ -33,7 +33,9 @@ bounded. The full response is always shown in the response pane at the time of
 the request.
 
 ## Requirements
-- PHP 8.2
+- PHP 8.4 or newer (non-dev dependencies — symfony/event-dispatcher,
+  symfony/finder, doctrine/instantiator — require it; `composer install` fails
+  on anything older)
 - Composer (if building from source)
 - Node.js (if building from source)
 
