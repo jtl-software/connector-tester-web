@@ -12,7 +12,8 @@ export default {
     return {
       store,
       limit: 100,
-      clearOption: ''
+      clearOption: '',
+      clearTableName: ''
     }
   },
   computed: {
@@ -29,13 +30,22 @@ export default {
     },
   },
   methods: {
+    setClearTable(tableName) {
+      this.clearOption = 'clearControllerLinkings'
+      this.clearTableName = tableName
+    },
     handleClearConfirmationEvent(data) {
       if (data) {
-        this.startPostRequest(this.clearOption)
+        if (this.clearTableName) {
+          this.startPostRequest(this.clearOption, { controller: this.clearTableName })
+          this.clearTableName = ''
+        } else {
+          this.startPostRequest(this.clearOption)
+        }
       }
     },
-    async startPostRequest(url) {
-      const message = this.axios.post(url, this.postData)
+    async startPostRequest(url, extraData = {}) {
+      const message = this.axios.post(url, { ...this.postData, ...extraData })
       store.resultData = (await message).data
       store.requestTime = parseFloat((await message).headers['x-request-time']).toFixed(2)
     }
@@ -68,6 +78,8 @@ export default {
                     <button class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkings'">Clear all</button>
                     <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearLinkingsFromJson'">Clear from json</button>
                     <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="clearOption = 'clearControllerLinkings'">Clear Method</button>
+                    <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="setClearTable('productVariation')">Clear Variation Linkings</button>
+                    <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#clearLinkingsModal" @click="setClearTable('productVariationValue')">Clear Variation Value Linkings</button>
                   </div>
                 </li>
               </ul>
