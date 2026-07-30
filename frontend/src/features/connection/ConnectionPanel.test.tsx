@@ -41,12 +41,34 @@ describe('ConnectionPanel', () => {
     expect(useAppStore.getState().connected).toBe(true)
   })
 
-  it('stays disconnected when authenticate fails', async () => {
+  it('stays disconnected on a transport/network error (ok: false)', async () => {
     vi.spyOn(api, 'callAction').mockResolvedValue({
       ok: false, httpStatus: 500, durationMs: 5, data: null, errorMessage: 'nope'
     })
     useAppStore.setState({
       connections: [{ name: 'shop-dev', url: 'http://x', token: 't' }],
+      activeConnection: 'shop-dev'
+    })
+
+    render(<ConnectionPanel />)
+    await userEvent.click(screen.getByRole('button', { name: /authenticate/i }))
+
+    expect(useAppStore.getState().connected).toBe(false)
+  })
+
+  // AuthController::startAuth() (src/Controller/AuthController.php) catches
+  // ResponseException itself and returns the string 'Error: …' with HTTP 200
+  // — this is the actual shape the backend produces for a bad token, unlike
+  // a 500. A previous version of this test mocked { ok: false, httpStatus:
+  // 500 } here, a shape the backend never returns for an auth failure, so it
+  // never would have caught the bug where a 200-with-Error body reported
+  // "Connected".
+  it('stays disconnected when authenticate returns HTTP 200 with an Error: body', async () => {
+    vi.spyOn(api, 'callAction').mockResolvedValue({
+      ok: true, httpStatus: 200, durationMs: 5, data: 'Error: invalid connector token'
+    })
+    useAppStore.setState({
+      connections: [{ name: 'shop-dev', url: 'http://x', token: 'bad-token' }],
       activeConnection: 'shop-dev'
     })
 
