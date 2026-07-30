@@ -9,7 +9,7 @@
     "start": "electron .",
     "php:fetch": "./scripts/fetch-php.sh",
     "smoke": "node scripts/smoke.js",
-    "prebuild": "cd .. && composer install --no-dev --optimize-autoloader && cd frontend && npm install && npm run build",
+    "prebuild": "cd .. && composer install --no-dev --optimize-autoloader && cd frontend && npm ci && npm run build",
     "build:mac": "npm run prebuild && electron-builder --mac zip --arm64 --x64",
     "build:win": "npm run prebuild && electron-builder --win zip --x64"
   },
