@@ -35,6 +35,65 @@ The JTL Connector Tester lets you send RPC calls and view the responses. It can 
 2. Upload the extracted files to your server
 3. Point your domain to the public directory inside the root folder.
 
+## Desktop App (macOS & Windows)
+
+The desktop app bundles its own PHP runtime, so nothing needs to be installed —
+no PHP, no Composer, no Node. It can reach connectors running on `localhost`,
+which the hosted tester at tester.jtl-connector.de cannot, and it works offline.
+
+### Install
+
+1. Download the zip for your platform from the releases page.
+2. Extract it anywhere you like — there is no installer.
+3. **macOS only:** if you downloaded the zip through a browser, macOS quarantines
+   it. Clear the flag once:
+
+   ```bash
+   xattr -dr com.apple.quarantine "JTL Connector Tester.app"
+   ```
+
+   Without this you get "the app is damaged and can't be opened". The builds are
+   deliberately unsigned; this is expected.
+4. Launch the app.
+
+### Your data
+
+Saved connections, request history, and saved payloads live in a `data/` folder
+**next to the app** — beside the `.app` on macOS, beside the `.exe` on Windows.
+The app is fully portable: copy the extracted folder to a USB stick and your
+connections come with it. Delete `data/` to reset to a clean state.
+
+Extract somewhere writable. If you extract into a read-only location the app
+will tell you rather than silently losing data.
+
+### Building from source
+
+Requires macOS. Both platforms are built on a Mac.
+
+```bash
+cd desktop
+npm install
+npm run php:fetch     # downloads static PHP binaries, verifies extensions
+npm run build:mac     # -> dist/JTL-Connector-Tester-<version>-mac-{arm64,x64}.zip
+npm run build:win     # -> dist/JTL-Connector-Tester-<version>-win-x64.zip
+```
+
+Both platforms build on a Mac with no extra tooling — **wine is not required**,
+and was confirmed not installed on the machine these builds were verified on.
+electron-builder patches the Windows executable's icon and version resources
+natively rather than shelling out to `rcedit` under wine; the build log never
+prints "default Electron icon is used", confirming the custom `.ico` applied.
+(Wine would only be needed for an NSIS installer target, which this project
+deliberately avoids in favour of portable zips.)
+
+Useful during development:
+
+```bash
+npm start             # run unpackaged against system PHP
+npm test              # unit tests for path/port/arg helpers
+npm run smoke         # boot PHP headless and assert the API responds
+```
+
 ## How to use it
 
 1. Enter your connector credentials using the credentials button at the top left.
