@@ -59,23 +59,29 @@ function writePortFile(portFile, value) {
 /**
  * Pick the port the bundled PHP server should bind to.
  *
- * Always tries DEFAULT_PORT first. Only if that is genuinely unavailable
+ * Always tries `defaultPort` first. Only if that is genuinely unavailable
  * does it fall back — preferring the fallback port recorded from a previous
  * launch (if it is still free) before resorting to an OS-assigned random
  * port — and records whichever fallback it picked in `portFile` so repeated
  * launches on a machine where the default stays occupied still land on one
  * stable origin instead of a new one every time.
+ *
+ * `defaultPort` defaults to the real `DEFAULT_PORT` for production use, but
+ * is injectable so tests can exercise the "default is occupied" path against
+ * a throwaway ephemeral port they own instead of binding the real fixed
+ * default — binding 47831 in a test suite means the suite spuriously fails
+ * for any developer who happens to have the actual app running (N6).
  */
-export async function pickPort(host, portFile) {
-  if (await isPortFree(DEFAULT_PORT, host)) {
-    writePortFile(portFile, DEFAULT_PORT)
-    return DEFAULT_PORT
+export async function pickPort(host, portFile, defaultPort = DEFAULT_PORT) {
+  if (await isPortFree(defaultPort, host)) {
+    writePortFile(portFile, defaultPort)
+    return defaultPort
   }
 
   let previousFallback = null
   try {
     const raw = parseInt(readFileSync(portFile, 'utf8'), 10)
-    if (isValidPort(raw) && raw !== DEFAULT_PORT) previousFallback = raw
+    if (isValidPort(raw) && raw !== defaultPort) previousFallback = raw
   } catch {
     // no previous fallback recorded — first time the default port was busy
   }
