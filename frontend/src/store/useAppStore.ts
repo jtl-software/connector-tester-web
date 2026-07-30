@@ -31,7 +31,9 @@ interface AppState {
   setResult: (r: ApiResult | null) => void
   addHistory: (e: HistoryEntry) => Promise<void>
   refreshHistory: () => Promise<void>
+  renameHistoryEntry: (id: string, label: string) => Promise<void>
   setPayloads: (list: SavedPayload[]) => void
+  renamePayload: (id: string, name: string) => void
   setHistoryError: (message: string | null) => void
 }
 
@@ -85,9 +87,24 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   refreshHistory: async () => set({ history: await loadHistory() }),
 
+  renameHistoryEntry: async (id, label) => {
+    const existing = get().history.find((h) => h.id === id)
+    if (!existing) return
+    // Reuses appendHistory's put-by-id (same id overwrites in place) so the
+    // per-connection retention trim in appendHistory doesn't need a second
+    // implementation just for renames.
+    await appendHistory({ ...existing, label })
+    set({ history: await loadHistory() })
+  },
+
   setPayloads: (list) => {
     savePayloads(list)
     set({ payloads: list })
+  },
+
+  renamePayload: (id, name) => {
+    const list = get().payloads.map((p) => (p.id === id ? { ...p, name } : p))
+    get().setPayloads(list)
   },
 
   setHistoryError: (message) => set({ historyError: message })

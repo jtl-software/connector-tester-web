@@ -20,14 +20,20 @@ export default function App() {
           style={{
             width: 220, flex: '0 0 220px',
             borderRight: '1px solid rgba(128,128,128,.3)',
-            display: 'flex', flexDirection: 'column'
+            display: 'flex', flexDirection: 'column', minHeight: 0
           }}
         >
           <BrandHeader />
           <ConnectionPanel />
+          {/*
+            History and Saved payloads must occupy equal shares of whatever
+            rail height is left (flex: '1 1 0' on each, set on their own root
+            element in HistoryList/SavedPayloadList) and scroll their own list
+            body via overflow-y: auto, so a long history can never push
+            Saved payloads — or the theme switcher below — out of view.
+          */}
           <HistoryList />
           <SavedPayloadList />
-          <div style={{ flex: 1 }} />
           <div style={{ padding: 12, borderTop: '1px solid rgba(128,128,128,.3)' }}>
             <ThemeSwitcher variant="dropdown" />
           </div>

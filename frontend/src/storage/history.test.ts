@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
-  appendHistory, loadHistory, clearHistory,
+  appendHistory, loadHistory, clearHistory, visibleHistory,
   HISTORY_LIMIT, MAX_RESPONSE_BYTES, type HistoryEntry
 } from './history'
 
@@ -75,5 +75,42 @@ describe('history storage', () => {
     await appendHistory(entry())
     await clearHistory()
     expect(await loadHistory()).toEqual([])
+  })
+
+  describe('per-connection retention', () => {
+    it(`keeps up to ${HISTORY_LIMIT} entries independently per connectionName`, async () => {
+      for (let i = 0; i < HISTORY_LIMIT + 20; i++) {
+        await appendHistory(entry({ at: i, connectionName: 'connector-a' }))
+      }
+      const all = await loadHistory()
+      expect(all.filter((e) => e.connectionName === 'connector-a')).toHaveLength(HISTORY_LIMIT)
+    })
+
+    it("does not evict connector A's history when connector B exceeds the cap", async () => {
+      // Connector A has a modest, well-under-the-cap amount of history.
+      for (let i = 0; i < 10; i++) {
+        await appendHistory(entry({ at: i, connectionName: 'connector-a' }))
+      }
+      // Connector B alone blows way past HISTORY_LIMIT.
+      for (let i = 0; i < HISTORY_LIMIT + 50; i++) {
+        await appendHistory(entry({ at: 1000 + i, connectionName: 'connector-b' }))
+      }
+
+      const all = await loadHistory()
+      expect(all.filter((e) => e.connectionName === 'connector-a')).toHaveLength(10)
+      expect(all.filter((e) => e.connectionName === 'connector-b')).toHaveLength(HISTORY_LIMIT)
+    })
+  })
+})
+
+describe('visibleHistory', () => {
+  it('returns nothing when no connection is selected', () => {
+    expect(visibleHistory([entry({ connectionName: 'a' })], null)).toEqual([])
+  })
+
+  it('only returns entries for the active connection', () => {
+    const a = entry({ connectionName: 'a' })
+    const b = entry({ connectionName: 'b' })
+    expect(visibleHistory([a, b], 'a')).toEqual([a])
   })
 })

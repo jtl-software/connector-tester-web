@@ -1,15 +1,18 @@
+import { useState } from 'react'
 import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-editor'
 import { Button } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
 import { useTriggerAction } from '@/features/request/useTriggerAction'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
 import { PaneHeader } from '@/components/PaneHeader'
+import { NameDialog } from '@/components/NameDialog'
 import { newId } from '@/lib/id'
 
 export function PayloadPane() {
-  const { payload, setPayload, connected } = useAppStore()
+  const { payload, setPayload, connected, activeConnection } = useAppStore()
   const { trigger, busy } = useTriggerAction()
   const { ref: editorWrapRef, height: editorHeight } = useContainerHeight<HTMLDivElement>()
+  const [saveOpen, setSaveOpen] = useState(false)
 
   async function loadSkeleton() {
     await trigger('getSkeleton')
@@ -39,25 +42,35 @@ export function PayloadPane() {
             label="Save"
             size="sm"
             variant="ghost"
-            disabled={!payload.trim()}
-            onClick={() => {
-              const name = window.prompt('Name this payload')
-              if (!name?.trim()) return
-              const s = useAppStore.getState()
-              s.setPayloads([
-                ...s.payloads.filter((p) => p.name !== name.trim()),
-                {
-                  id: newId(),
-                  name: name.trim(),
-                  controller: s.controller,
-                  body: s.payload,
-                  updatedAt: Date.now()
-                }
-              ])
-            }}
+            disabled={!payload.trim() || !activeConnection}
+            onClick={() => setSaveOpen(true)}
           />
         </div>
       </PaneHeader>
+
+      <NameDialog
+        open={saveOpen}
+        title="Name this payload"
+        label="Payload name"
+        onConfirm={(name) => {
+          const s = useAppStore.getState()
+          const connectionName = s.activeConnection
+          if (!connectionName) { setSaveOpen(false); return }
+          s.setPayloads([
+            ...s.payloads.filter((p) => !(p.name === name && p.connectionName === connectionName)),
+            {
+              id: newId(),
+              name,
+              controller: s.controller,
+              body: s.payload,
+              connectionName,
+              updatedAt: Date.now()
+            }
+          ])
+          setSaveOpen(false)
+        }}
+        onCancel={() => setSaveOpen(false)}
+      />
 
       <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
         <CodeEditor value={payload} onChange={setPayload} defaultLanguage="json" height={editorHeight} />

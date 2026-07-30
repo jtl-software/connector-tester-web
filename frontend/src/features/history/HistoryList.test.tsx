@@ -22,12 +22,19 @@ beforeEach(async () => {
 
 describe('HistoryList', () => {
   it('shows an empty state', () => {
+    useAppStore.setState({ activeConnection: 'c' })
+    render(<HistoryList />)
+    expect(screen.getByText(/no requests yet/i)).toBeInTheDocument()
+  })
+
+  it('shows an empty state when no connection is selected, even with history present', () => {
+    useAppStore.setState({ activeConnection: null, history: [entry()] })
     render(<HistoryList />)
     expect(screen.getByText(/no requests yet/i)).toBeInTheDocument()
   })
 
   it('lists entries with status and duration', () => {
-    useAppStore.setState({ history: [entry({ controller: 'product', durationMs: 1200 })] })
+    useAppStore.setState({ activeConnection: 'c', history: [entry({ controller: 'product', durationMs: 1200 })] })
     render(<HistoryList />)
     expect(screen.getByText(/product/)).toBeInTheDocument()
     expect(screen.getByText('200')).toBeInTheDocument()
@@ -46,6 +53,7 @@ describe('HistoryList', () => {
 
   it('restores controller, action, limit, and payload on click', async () => {
     useAppStore.setState({
+      activeConnection: 'c',
       history: [entry({ controller: 'manufacturer', action: 'Push', limit: 7, payload: '{"z":9}' })]
     })
 
@@ -57,5 +65,58 @@ describe('HistoryList', () => {
     expect(s.action).toBe('Push')
     expect(s.limit).toBe(7)
     expect(s.payload).toBe('{"z":9}')
+  })
+
+  describe('per-connector scoping', () => {
+    it('hides entries belonging to a different connector', () => {
+      useAppStore.setState({
+        activeConnection: 'connector-2',
+        history: [entry({ connectionName: 'connector-1', controller: 'product' })]
+      })
+      render(<HistoryList />)
+      expect(screen.queryByText(/product/)).not.toBeInTheDocument()
+      expect(screen.getByText(/no requests yet/i)).toBeInTheDocument()
+    })
+
+    it('shows only the active connector\'s entries when both connectors have history', () => {
+      useAppStore.setState({
+        activeConnection: 'connector-1',
+        history: [
+          entry({ connectionName: 'connector-1', controller: 'product' }),
+          entry({ connectionName: 'connector-2', controller: 'customer' })
+        ]
+      })
+      render(<HistoryList />)
+      expect(screen.getByText(/product/)).toBeInTheDocument()
+      expect(screen.queryByText(/customer/)).not.toBeInTheDocument()
+    })
+  })
+
+  describe('rename', () => {
+    it('shows the label instead of controller · action once renamed', () => {
+      useAppStore.setState({
+        activeConnection: 'c',
+        history: [entry({ controller: 'product', action: 'Pull', label: 'Nightly pull' })]
+      })
+      render(<HistoryList />)
+      expect(screen.getByText('Nightly pull')).toBeInTheDocument()
+      expect(screen.queryByText(/product · Pull/)).not.toBeInTheDocument()
+    })
+
+    it('opens the rename dialog and persists the new label without breaking restore', async () => {
+      const e = entry({ controller: 'product', action: 'Pull' })
+      useAppStore.setState({ activeConnection: 'c', history: [e] })
+      render(<HistoryList />)
+
+      await userEvent.click(screen.getByRole('button', { name: /rename/i }))
+      await userEvent.type(screen.getByRole('textbox', { name: /entry name/i }), 'My renamed run')
+      await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+      expect(await screen.findByText('My renamed run')).toBeInTheDocument()
+
+      await userEvent.click(screen.getByRole('button', { name: /my renamed run/i }))
+      expect(useAppStore.getState().controller).toBe('product')
+      expect(useAppStore.getState().action).toBe('Pull')
+    })
   })
 })

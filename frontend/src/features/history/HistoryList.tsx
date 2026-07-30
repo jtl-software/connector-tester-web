@@ -1,11 +1,19 @@
+import { useState } from 'react'
 import { Button } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
-import { clearHistory, type HistoryEntry } from '@/storage/history'
+import { clearHistory, visibleHistory, type HistoryEntry } from '@/storage/history'
 import { ACTIONS, type Action, type ControllerName } from '@/types/domain'
+import { NameDialog } from '@/components/NameDialog'
 
 export function HistoryList() {
-  const { history, historyError, setController, setAction, setLimit, setPayload, setResult, refreshHistory } =
-    useAppStore()
+  const {
+    history, historyError, activeConnection,
+    setController, setAction, setLimit, setPayload, setResult,
+    refreshHistory, renameHistoryEntry
+  } = useAppStore()
+  const [renaming, setRenaming] = useState<HistoryEntry | null>(null)
+
+  const entries = visibleHistory(history, activeConnection)
 
   function restore(e: HistoryEntry) {
     const controller = e.controller as ControllerName
@@ -24,7 +32,7 @@ export function HistoryList() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0', minHeight: 0 }}>
       <header
         style={{
           display: 'flex', alignItems: 'center', padding: '5px 10px',
@@ -60,39 +68,61 @@ export function HistoryList() {
         </div>
       )}
 
-      <div style={{ overflowY: 'auto', minHeight: 0 }}>
-        {history.length === 0 && (
+      <div style={{ overflowY: 'auto', minHeight: 0, flex: 1 }}>
+        {entries.length === 0 && (
           <p style={{ padding: '8px 10px', fontSize: 11, opacity: 0.6 }}>No requests yet.</p>
         )}
 
-        {history.map((e) => (
-          <button
+        {entries.map((e) => (
+          <div
             key={e.id}
-            onClick={() => restore(e)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6, width: '100%',
-              padding: '5px 10px', background: 'none', border: 0,
-              borderBottom: '1px solid rgba(128,128,128,.16)',
-              cursor: 'pointer', textAlign: 'left', fontSize: 11, color: 'inherit'
-            }}
+            style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(128,128,128,.16)' }}
           >
-            <span
+            <button
+              onClick={() => restore(e)}
               style={{
-                background: e.status === 'ok' ? '#16a34a' : '#dc2626',
-                color: '#fff', padding: '1px 5px', borderRadius: 3, fontSize: 9, fontWeight: 700
+                display: 'flex', alignItems: 'center', gap: 6, flex: 1, minWidth: 0,
+                padding: '5px 10px', background: 'none', border: 0,
+                cursor: 'pointer', textAlign: 'left', fontSize: 11, color: 'inherit'
               }}
             >
-              {e.httpStatus || 'ERR'}
-            </span>
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {e.controller} · {e.action}
-            </span>
-            <span style={{ marginLeft: 'auto', opacity: 0.55, fontSize: 9 }}>
-              {e.durationMs >= 1000 ? `${(e.durationMs / 1000).toFixed(1)}s` : `${e.durationMs.toFixed(0)}ms`}
-            </span>
-          </button>
+              <span
+                style={{
+                  background: e.status === 'ok' ? '#16a34a' : '#dc2626',
+                  color: '#fff', padding: '1px 5px', borderRadius: 3, fontSize: 9, fontWeight: 700
+                }}
+              >
+                {e.httpStatus || 'ERR'}
+              </span>
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {e.label || `${e.controller} · ${e.action}`}
+              </span>
+              <span style={{ marginLeft: 'auto', opacity: 0.55, fontSize: 9 }}>
+                {e.durationMs >= 1000 ? `${(e.durationMs / 1000).toFixed(1)}s` : `${e.durationMs.toFixed(0)}ms`}
+              </span>
+            </button>
+            <Button
+              label="✎"
+              aria-label="Rename entry"
+              size="sm"
+              variant="ghost"
+              onClick={() => setRenaming(e)}
+            />
+          </div>
         ))}
       </div>
+
+      <NameDialog
+        open={renaming != null}
+        title="Rename history entry"
+        label="Entry name"
+        initialValue={renaming?.label ?? ''}
+        onConfirm={(name) => {
+          if (renaming) void renameHistoryEntry(renaming.id, name)
+          setRenaming(null)
+        }}
+        onCancel={() => setRenaming(null)}
+      />
     </div>
   )
 }
