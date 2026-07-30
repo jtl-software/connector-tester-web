@@ -1,18 +1,39 @@
 import { app, BrowserWindow, dialog, shell } from 'electron'
 import { spawn } from 'node:child_process'
 import {
-  createWriteStream, mkdirSync, accessSync, constants, statSync, renameSync,
-  readFileSync, writeFileSync
+  createWriteStream, mkdirSync, accessSync, constants, statSync, renameSync
 } from 'node:fs'
-import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { findFreePort } from './lib/free-port.js'
 import { resolveDataDir, resolvePhpBinary } from './lib/data-dir.js'
 import { buildPhpArgs } from './lib/php-args.js'
+import { pickPort } from './lib/port-selection.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
+
+// Single-instance guard. Every instance points app.setPath('userData', ...)
+// at the same portable data/chromium folder (see below) and the sticky-port
+// file at data/.port. A second instance would race the first for that port
+// file and for the shared Chromium profile: it would find the port busy,
+// fall back to a fresh random one, and overwrite `.port` with it — so the
+// *next* single launch would land on a different origin and lose every
+// saved connection, the exact failure the sticky-port mechanism exists to
+// prevent (and it needs no user error, just a stray double-click on a
+// no-installer, "extract and run" app). Must run before app.whenReady().
+const gotSingleInstanceLock = app.requestSingleInstanceLock()
+if (!gotSingleInstanceLock) {
+  app.quit()
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.show()
+      mainWindow.focus()
+    }
+  })
+}
 
 const resourcesPath = app.isPackaged ? process.resourcesPath : path.resolve(here, '..')
 const routerScript = app.isPackaged
@@ -71,46 +92,21 @@ function rotateLog(logPath) {
   }
 }
 
-function isPortFree(candidate, host) {
-  return new Promise((resolve) => {
-    const srv = net.createServer()
-    srv.once('error', () => resolve(false))
-    srv.listen(candidate, host, () => srv.close(() => resolve(true)))
-  })
-}
-
 /**
- * Reuse the port from the previous launch when possible, falling back to a
- * fresh free port otherwise. This matters because mainWindow.loadURL points
- * at http://127.0.0.1:<port>/, and Chromium's localStorage/IndexedDB (where
- * the frontend keeps saved connections, per ModalFormComponent.vue) is
- * partitioned by full origin, port included. A brand-new random port on
- * every launch — the plan's original design — silently discards all saved
- * connections on every restart, since the app never revisits the origin it
- * wrote them under. Persisting the last port beside the data dir keeps the
- * origin (and therefore the user's data) stable across the common case of a
- * single instance restarting on an otherwise-idle machine.
+ * Slim's error middleware runs with logErrorDetails=true
+ * (src/Controller/Kernel.php), so an uncaught exception's stack trace —
+ * written to PHP's stderr, which we tee into data/logs/php.log and surface
+ * verbatim in crash dialogs below — can include a fragment of the connector
+ * token: it's a constructor argument on AuthController, which sits on that
+ * stack. PHP's own trace formatter truncates any string argument longer than
+ * 15 characters to `'<first 15 chars>...'`, which is exactly the shape a
+ * bearer token or connector secret takes in that output. `data/` is
+ * documented as portable (carried on a USB stick), so strip that pattern
+ * before it ever reaches disk or a dialog rather than relying on the PHP
+ * side alone to not log it.
  */
-async function pickPort(host) {
-  const portFile = path.join(dataDir, '.port')
-  let previous = null
-  try {
-    previous = parseInt(readFileSync(portFile, 'utf8'), 10)
-  } catch {
-    // no previous port recorded — first launch
-  }
-
-  const chosen = (previous && (await isPortFree(previous, host)))
-    ? previous
-    : await findFreePort(host)
-
-  try {
-    writeFileSync(portFile, String(chosen))
-  } catch {
-    // non-fatal — worst case we pick a fresh port again next launch
-  }
-
-  return chosen
+function redactSecrets(text) {
+  return text.replace(/'[^'\n]*\.\.\.'/g, "'[REDACTED]'")
 }
 
 function startPhp(chosenPort) {
@@ -143,15 +139,24 @@ function startPhp(chosenPort) {
   const logPath = path.join(dataDir, 'logs', 'php.log')
   rotateLog(logPath)
   const log = createWriteStream(logPath, { flags: 'a' })
-  child.stdout.pipe(log)
-  child.stderr.pipe(log)
+  child.stdout.on('data', (buf) => log.write(redactSecrets(buf.toString())))
 
   child.stderr.on('data', (buf) => {
-    lastStderr = (lastStderr + buf.toString()).slice(-4000)
+    const redacted = redactSecrets(buf.toString())
+    log.write(redacted)
+    lastStderr = (lastStderr + redacted).slice(-4000)
   })
 
   child.on('exit', (code, signal) => {
-    if (quitting) return
+    // `quitting` covers deliberate app-level shutdowns (before-quit,
+    // window-all-closed, the "Quit" choice below). `child.expectedExit`
+    // covers boot()'s own retry loop killing a PHP process that never
+    // became ready: that kill is synchronous but 'exit' fires asynchronously,
+    // so a shared flag toggled true-then-false around the kill() call is
+    // already back to false by the time this handler runs, and the "Backend
+    // stopped" dialog used to fire for a process the app killed on purpose.
+    // Tagging the child itself survives until the handler actually runs.
+    if (quitting || child.expectedExit) return
     const choice = dialog.showMessageBoxSync({
       type: 'error',
       title: 'Backend stopped',
@@ -186,40 +191,59 @@ async function waitForReady(chosenPort, timeoutMs = 15000) {
   throw new Error(`The backend did not start within ${timeoutMs / 1000} seconds.`)
 }
 
+// Re-entrancy guard: without it, "Restart backend" (triggered from a PHP
+// child's 'exit' handler) could run concurrently with an already-in-flight
+// boot() — e.g. the boot loop's own retry after a failed waitForReady. Both
+// calls would overwrite the module-level `phpProcess`/`port`, and the
+// loser's child would never be tracked or killed, leaking an orphan
+// `php -S 127.0.0.1:<port>` that outlives the app and holds a port that the
+// *next* launch's sticky-port logic then can't reuse either.
+let bootInFlight = false
+
 async function boot() {
-  let lastErr = null
+  if (bootInFlight) return
+  bootInFlight = true
+  try {
+    let lastErr = null
 
-  for (let attempt = 0; attempt < 3; attempt++) {
-    // Sticky port only on the first attempt — if it didn't work out, fall
-    // back to the original diversify-and-retry behavior rather than
-    // hammering the same problem port three times.
-    port = attempt === 0 ? await pickPort('127.0.0.1') : await findFreePort()
-    phpProcess = startPhp(port)
-    if (!phpProcess) return
+    for (let attempt = 0; attempt < 3; attempt++) {
+      // Sticky port only on the first attempt — if it didn't work out, fall
+      // back to the original diversify-and-retry behavior rather than
+      // hammering the same problem port three times.
+      port = attempt === 0
+        ? await pickPort('127.0.0.1', path.join(dataDir, '.port'))
+        : await findFreePort()
+      phpProcess = startPhp(port)
+      if (!phpProcess) return
 
-    try {
-      await waitForReady(port)
-      lastErr = null
-      break
-    } catch (err) {
-      lastErr = err
-      quitting = true
-      phpProcess.kill('SIGKILL')
-      quitting = false
-      phpProcess = null
+      try {
+        await waitForReady(port)
+        lastErr = null
+        break
+      } catch (err) {
+        lastErr = err
+        // Tag the child as an expected exit *before* killing it so the
+        // 'exit' handler (which fires asynchronously) can tell this apart
+        // from a genuine crash — see the comment on that handler.
+        phpProcess.expectedExit = true
+        phpProcess.kill('SIGKILL')
+        phpProcess = null
+      }
     }
-  }
 
-  if (lastErr) {
-    fatal(
-      'Backend failed to start',
-      `${lastErr.message}\n\nLast output from PHP:\n\n${lastStderr.slice(-2000)}`
-    )
-    return
-  }
+    if (lastErr) {
+      fatal(
+        'Backend failed to start',
+        `${lastErr.message}\n\nLast output from PHP:\n\n${lastStderr.slice(-2000)}`
+      )
+      return
+    }
 
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    await mainWindow.loadURL(`http://127.0.0.1:${port}/`)
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      await mainWindow.loadURL(`http://127.0.0.1:${port}/`)
+    }
+  } finally {
+    bootInFlight = false
   }
 }
 
@@ -255,9 +279,18 @@ function createWindow() {
 }
 
 app.whenReady().then(async () => {
-  if (!ensureDataDir()) return
-  createWindow()
-  await boot()
+  // app.quit() after a failed requestSingleInstanceLock() does not
+  // synchronously abort a whenReady() that was already about to resolve —
+  // guard explicitly so a losing second instance never spins up a second
+  // backend before it exits.
+  if (!gotSingleInstanceLock) return
+  try {
+    if (!ensureDataDir()) return
+    createWindow()
+    await boot()
+  } catch (err) {
+    fatal('Unexpected startup error', err?.stack || err?.message || String(err))
+  }
 })
 
 app.on('window-all-closed', () => {
