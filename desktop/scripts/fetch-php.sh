@@ -3,7 +3,7 @@ set -euo pipefail
 
 #
 # PHP_VERSION must satisfy the project's actual Composer platform requirement.
-# composer.json declares "php": "^8.1", but composer.lock pins
+# composer.json declares "php": "^8.4", matching composer.lock, which pins
 # symfony/event-dispatcher and symfony/finder (pulled in unconstrained via
 # jtl/connector's "*" requirement, resolved against the Homebrew PHP 8.5.1
 # used to generate the lock file) to versions whose own composer.json
