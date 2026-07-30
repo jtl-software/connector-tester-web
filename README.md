@@ -18,6 +18,20 @@ The JTL Connector Tester lets you send RPC calls and view the responses. It can 
 - Get Skeleton 
 - Push Test 
 
+### Request history and saved payloads
+
+The tester keeps your last 100 requests — controller, action, payload, response,
+status, and timing. Click any entry in the left rail to restore that request.
+History is stored in your browser (IndexedDB), so it is per-browser and per-device;
+nothing is sent to or stored on the server.
+
+Payloads can be named and saved for reuse. They are stored in localStorage
+alongside your saved connections.
+
+Responses larger than 512 KB are stored truncated so the history database stays
+bounded. The full response is always shown in the response pane at the time of
+the request.
+
 ## Requirements
 - PHP 8.2
 - Composer (if building from source)
@@ -26,8 +40,8 @@ The JTL Connector Tester lets you send RPC calls and view the responses. It can 
 ## How to install locally
 #### From Source:
 1. Run `composer install` inside the root directory
-2. Run `npm install` inside the frontend directory
-3. Run `npm run build` inside the frontend directory
+2. Run `npm install` inside the frontend directory (requires Node 20+)
+3. Run `npm run build` inside the frontend directory (requires Node 20+)
 4. Point your domain to the public directory inside the root folder.
 
 #### From release
