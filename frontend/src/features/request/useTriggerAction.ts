@@ -48,7 +48,16 @@ export function useTriggerAction() {
         responseBytes: serialised.length,
         truncated: false
       }
-      await s.addHistory(entry)
+      try {
+        await s.addHistory(entry)
+      } catch (err) {
+        // The request itself already succeeded and its response is already
+        // rendered via setResult() above, so a failure to persist history
+        // (e.g. IndexedDB quota/corruption) is survivable — but left
+        // unhandled it escapes as an unhandled promise rejection since
+        // callers invoke trigger() from onClick without awaiting/catching it.
+        console.error('Failed to save history entry', err)
+      }
     } finally {
       setBusy(false)
     }
