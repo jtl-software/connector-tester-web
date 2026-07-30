@@ -2,10 +2,12 @@ import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-edit
 import { Button } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
 import { useTriggerAction } from '@/features/request/useTriggerAction'
+import { useContainerHeight } from '@/hooks/useContainerHeight'
 
 export function PayloadPane() {
   const { payload, setPayload, connected, result } = useAppStore()
   const { trigger, busy } = useTriggerAction()
+  const { ref: editorWrapRef, height: editorHeight } = useContainerHeight<HTMLDivElement>()
 
   async function loadSkeleton() {
     await trigger('getSkeleton')
@@ -55,8 +57,8 @@ export function PayloadPane() {
         </div>
       </header>
 
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <CodeEditor value={payload} onChange={setPayload} defaultLanguage="json" height="100%" />
+      <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
+        <CodeEditor value={payload} onChange={setPayload} defaultLanguage="json" height={editorHeight} />
       </div>
 
       <footer style={{ padding: '4px 10px', fontSize: 10, opacity: 0.6, borderTop: '1px solid rgba(128,128,128,.22)' }}>
