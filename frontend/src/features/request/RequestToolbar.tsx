@@ -1,4 +1,4 @@
-import { Button, Select } from '@jtl-software/platform-ui-react'
+import { Button, Input, Select } from '@jtl-software/platform-ui-react'
 import { ACTIONS, CONTROLLERS, CONTROLLER_LABELS, type Action, type ControllerName } from '@/types/domain'
 import { useAppStore } from '@/store/useAppStore'
 import { useTriggerAction } from './useTriggerAction'
@@ -32,17 +32,19 @@ export function RequestToolbar() {
         onChange={(v) => setAction(v as Action)}
       />
 
-      <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12 }}>
-        Limit
-        <input
+      <div style={{ width: 120 }}>
+        <Input
+          id="request-limit"
+          label="Limit"
+          layout="horizontal"
           type="number"
           min={1}
-          value={limit}
-          aria-label="Limit"
-          style={{ width: 80 }}
-          onChange={(e) => setLimit(Number.parseInt(e.target.value, 10))}
+          size="sm"
+          value={String(limit)}
+          disabled={!connected}
+          onChange={(v) => setLimit(Number.parseInt(v, 10))}
         />
-      </label>
+      </div>
 
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, position: 'relative' }}>
         <DevMenu />

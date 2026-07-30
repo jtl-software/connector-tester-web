@@ -3,6 +3,7 @@ import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-edit
 import { useAppStore } from '@/store/useAppStore'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
 import { PaneHeader } from '@/components/PaneHeader'
+import { MAX_RESPONSE_BYTES } from '@/storage/history'
 
 function countItems(data: unknown): string {
   if (Array.isArray(data)) return `${data.length} items`
@@ -57,6 +58,14 @@ export function ResponsePane() {
       <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
         <CodeEditor value={shown} defaultLanguage="json" height={editorHeight} readOnly />
       </div>
+
+      <footer style={{ padding: '4px 10px', fontSize: 10, opacity: 0.6, borderTop: '1px solid rgba(128,128,128,.22)' }}>
+        {result
+          ? `Response: ${(text.length / 1024).toFixed(1)} KB${
+              text.length > MAX_RESPONSE_BYTES ? ' · would be truncated in history' : ''
+            }`
+          : 'Response: empty'}
+      </footer>
     </section>
   )
 }

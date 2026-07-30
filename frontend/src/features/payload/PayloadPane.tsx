@@ -7,7 +7,7 @@ import { PaneHeader } from '@/components/PaneHeader'
 import { newId } from '@/lib/id'
 
 export function PayloadPane() {
-  const { payload, setPayload, connected, result } = useAppStore()
+  const { payload, setPayload, connected } = useAppStore()
   const { trigger, busy } = useTriggerAction()
   const { ref: editorWrapRef, height: editorHeight } = useContainerHeight<HTMLDivElement>()
 
@@ -64,8 +64,11 @@ export function PayloadPane() {
       </div>
 
       <footer style={{ padding: '4px 10px', fontSize: 10, opacity: 0.6, borderTop: '1px solid rgba(128,128,128,.22)' }}>
-        {payload.trim() ? (valid ? 'JSON valid' : 'Invalid JSON') : 'Empty'}
-        {result ? '' : ''}
+        {payload.trim()
+          ? valid
+            ? `Payload: valid JSON · ${payload.split('\n').length} lines`
+            : 'Payload: invalid JSON'
+          : 'Payload: empty'}
       </footer>
     </section>
   )
