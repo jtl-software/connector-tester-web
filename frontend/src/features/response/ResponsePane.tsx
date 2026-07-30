@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-editor'
 import { useAppStore } from '@/store/useAppStore'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
 import { PaneHeader } from '@/components/PaneHeader'
 import { MAX_RESPONSE_BYTES } from '@/storage/history'
+import { filterResponse, type FilterResult } from '@/lib/responseFilter'
+import { FilteredResponseView } from './FilteredResponseView'
 
 function countItems(data: unknown): string {
   if (Array.isArray(data)) return `${data.length} items`
@@ -20,9 +22,13 @@ export function ResponsePane() {
   const { ref: editorWrapRef, height: editorHeight } = useContainerHeight<HTMLDivElement>()
 
   const text = result ? JSON.stringify(result.data, null, 2) : ''
-  const shown = filter
-    ? text.split('\n').filter((l) => l.toLowerCase().includes(filter.toLowerCase())).join('\n')
-    : text
+
+  // Only computed while a filter is active — with no filter the pane behaves
+  // exactly as before (plain <CodeEditor> showing the full response).
+  const filterResult: FilterResult | null = useMemo(() => {
+    if (!result || !filter) return null
+    return filterResponse(result.data, filter)
+  }, [result, filter])
 
   return (
     <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
@@ -39,7 +45,11 @@ export function ResponsePane() {
               {result.httpStatus || 'ERR'}
             </span>
             <span>{result.durationMs.toFixed(0)} ms</span>
-            <span>{countItems(result.data)}</span>
+            <span>
+              {filterResult?.kind === 'entities'
+                ? `${filterResult.matches.length} of ${filterResult.totalCount} entities`
+                : countItems(result.data)}
+            </span>
             {result.errorMessage && <span style={{ color: '#dc2626' }}>{result.errorMessage}</span>}
           </>
         ) : (
@@ -56,7 +66,11 @@ export function ResponsePane() {
       </PaneHeader>
 
       <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
-        <CodeEditor value={shown} defaultLanguage="json" height={editorHeight} readOnly />
+        {filterResult ? (
+          <FilteredResponseView result={filterResult} height={editorHeight} />
+        ) : (
+          <CodeEditor value={text} defaultLanguage="json" height={editorHeight} readOnly />
+        )}
       </div>
 
       <footer style={{ padding: '4px 10px', fontSize: 10, opacity: 0.6, borderTop: '1px solid rgba(128,128,128,.22)' }}>
