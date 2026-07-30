@@ -1,6 +1,10 @@
 import { app, BrowserWindow, dialog, shell } from 'electron'
 import { spawn } from 'node:child_process'
-import { createWriteStream, mkdirSync, accessSync, constants, statSync, renameSync } from 'node:fs'
+import {
+  createWriteStream, mkdirSync, accessSync, constants, statSync, renameSync,
+  readFileSync, writeFileSync
+} from 'node:fs'
+import net from 'node:net'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -65,6 +69,48 @@ function rotateLog(logPath) {
   } catch {
     // no existing log — nothing to rotate
   }
+}
+
+function isPortFree(candidate, host) {
+  return new Promise((resolve) => {
+    const srv = net.createServer()
+    srv.once('error', () => resolve(false))
+    srv.listen(candidate, host, () => srv.close(() => resolve(true)))
+  })
+}
+
+/**
+ * Reuse the port from the previous launch when possible, falling back to a
+ * fresh free port otherwise. This matters because mainWindow.loadURL points
+ * at http://127.0.0.1:<port>/, and Chromium's localStorage/IndexedDB (where
+ * the frontend keeps saved connections, per ModalFormComponent.vue) is
+ * partitioned by full origin, port included. A brand-new random port on
+ * every launch — the plan's original design — silently discards all saved
+ * connections on every restart, since the app never revisits the origin it
+ * wrote them under. Persisting the last port beside the data dir keeps the
+ * origin (and therefore the user's data) stable across the common case of a
+ * single instance restarting on an otherwise-idle machine.
+ */
+async function pickPort(host) {
+  const portFile = path.join(dataDir, '.port')
+  let previous = null
+  try {
+    previous = parseInt(readFileSync(portFile, 'utf8'), 10)
+  } catch {
+    // no previous port recorded — first launch
+  }
+
+  const chosen = (previous && (await isPortFree(previous, host)))
+    ? previous
+    : await findFreePort(host)
+
+  try {
+    writeFileSync(portFile, String(chosen))
+  } catch {
+    // non-fatal — worst case we pick a fresh port again next launch
+  }
+
+  return chosen
 }
 
 function startPhp(chosenPort) {
@@ -144,7 +190,10 @@ async function boot() {
   let lastErr = null
 
   for (let attempt = 0; attempt < 3; attempt++) {
-    port = await findFreePort()
+    // Sticky port only on the first attempt — if it didn't work out, fall
+    // back to the original diversify-and-retry behavior rather than
+    // hammering the same problem port three times.
+    port = attempt === 0 ? await pickPort('127.0.0.1') : await findFreePort()
     phpProcess = startPhp(port)
     if (!phpProcess) return
 

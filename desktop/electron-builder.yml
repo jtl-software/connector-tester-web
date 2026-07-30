@@ -1,0 +1,42 @@
+appId: de.jtl.connector-tester
+productName: JTL Connector Tester
+copyright: JTL-Software GmbH
+
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - main.js
+  - preload.js
+  - lib/**/*
+  - package.json
+
+extraResources:
+  - from: ../src
+    to: src
+  - from: ../vendor
+    to: vendor
+  - from: ../public
+    to: public
+  - from: ../composer.json
+    to: composer.json
+  - from: router.php
+    to: router.php
+  - from: php/${platform}-${arch}
+    to: php/${platform}-${arch}
+
+mac:
+  target:
+    - target: zip
+      arch: [arm64, x64]
+  category: public.app-category.developer-tools
+  icon: build/icon.icns
+
+win:
+  target:
+    - target: zip
+      arch: [x64]
+  icon: build/icon.ico
+
+artifactName: JTL-Connector-Tester-${version}-${os}-${arch}.${ext}
