@@ -1,33 +1,31 @@
-import { useState } from 'react'
-import { Button, ThemeSwitcher, ThemeProvider } from '@jtl-software/platform-ui-react'
-import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-editor'
+import { useEffect } from 'react'
+import { ThemeSwitcher, ThemeProvider } from '@jtl-software/platform-ui-react'
+import { useAppStore } from '@/store/useAppStore'
+import { ConnectionPanel } from '@/features/connection/ConnectionPanel'
 
 export default function App() {
-  const [code, setCode] = useState('{\n  "hello": "world"\n}')
+  const init = useAppStore((s) => s.init)
+  useEffect(() => { void init() }, [init])
 
   return (
     <ThemeProvider defaultTheme="dark">
-      <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <header
+      <div style={{ display: 'flex', height: '100%' }}>
+        <aside
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            padding: '10px 16px',
-            borderBottom: '1px solid rgba(128,128,128,.3)'
+            width: 220, flex: '0 0 220px',
+            borderRight: '1px solid rgba(128,128,128,.3)',
+            display: 'flex', flexDirection: 'column'
           }}
         >
-          <strong>JTL Connector Tester</strong>
-          <div style={{ marginLeft: 'auto' }}>
+          <ConnectionPanel />
+          <div style={{ flex: 1 }} />
+          <div style={{ padding: 12, borderTop: '1px solid rgba(128,128,128,.3)' }}>
             <ThemeSwitcher variant="dropdown" />
           </div>
-        </header>
+        </aside>
 
-        <main style={{ flex: 1, padding: 16 }}>
-          <Button label="Scaffold works" variant="default" onClick={() => setCode('{}')} />
-          <div style={{ marginTop: 16 }}>
-            <CodeEditor value={code} onChange={setCode} defaultLanguage="json" height="300px" />
-          </div>
+        <main style={{ flex: 1, minWidth: 0, padding: 16 }}>
+          <p style={{ opacity: 0.6 }}>Request workspace — added in Task 6.</p>
         </main>
       </div>
     </ThemeProvider>
