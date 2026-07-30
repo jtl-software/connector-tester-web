@@ -79,8 +79,6 @@ class Kernel
 
         $app->post('/clearControllerLinkings', [RouteController::class, 'clearControllerLinkings']);
 
-        $app->post('/generatePayload', [RouteController::class, 'generatePayload']);
-
         $app->get('/', [RouteController::class, 'index']);
     }
 }
