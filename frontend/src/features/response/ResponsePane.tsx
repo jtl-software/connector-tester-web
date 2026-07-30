@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-editor'
 import { useAppStore } from '@/store/useAppStore'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
+import { PaneHeader } from '@/components/PaneHeader'
 
 function countItems(data: unknown): string {
   if (Array.isArray(data)) return `${data.length} items`
@@ -23,13 +24,8 @@ export function ResponsePane() {
     : text
 
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1, borderLeft: '1px solid rgba(128,128,128,.3)' }}>
-      <header
-        style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '6px 10px', borderBottom: '1px solid rgba(128,128,128,.22)', fontSize: 11
-        }}
-      >
+    <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+      <PaneHeader style={{ gap: 10, fontSize: 11 }}>
         {result ? (
           <>
             <span
@@ -56,7 +52,7 @@ export function ResponsePane() {
           onChange={(e) => setFilter(e.target.value)}
           style={{ marginLeft: 'auto', width: 140 }}
         />
-      </header>
+      </PaneHeader>
 
       <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
         <CodeEditor value={shown} defaultLanguage="json" height={editorHeight} readOnly />

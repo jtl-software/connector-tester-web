@@ -34,8 +34,8 @@ export default function App() {
         <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
           <RequestToolbar />
           <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
-            <PayloadPane />
             <ResponsePane />
+            <PayloadPane />
           </div>
         </main>
       </div>

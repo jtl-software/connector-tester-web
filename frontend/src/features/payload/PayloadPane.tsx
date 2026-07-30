@@ -3,6 +3,7 @@ import { Button } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
 import { useTriggerAction } from '@/features/request/useTriggerAction'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
+import { PaneHeader } from '@/components/PaneHeader'
 
 export function PayloadPane() {
   const { payload, setPayload, connected, result } = useAppStore()
@@ -21,13 +22,13 @@ export function PayloadPane() {
   }
 
   return (
-    <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
-      <header
-        style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          padding: '6px 10px', borderBottom: '1px solid rgba(128,128,128,.22)'
-        }}
-      >
+    <section
+      style={{
+        display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1,
+        borderLeft: '1px solid rgba(128,128,128,.3)'
+      }}
+    >
+      <PaneHeader>
         <span style={{ fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', opacity: 0.65 }}>
           Payload
         </span>
@@ -55,7 +56,7 @@ export function PayloadPane() {
             }}
           />
         </div>
-      </header>
+      </PaneHeader>
 
       <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
         <CodeEditor value={payload} onChange={setPayload} defaultLanguage="json" height={editorHeight} />
