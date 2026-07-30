@@ -176,12 +176,18 @@ frontend, stages `src/`, `vendor/`, `public/`, `router.php`, and `php/<target>/`
 `extraResources`, then invokes `electron-builder` with **`zip` as the only target**.
 Excluded from staging: `frontend/node_modules`, `.git`, `core`, `shopify-connector`.
 
-Both targets can be built from macOS. The Windows `zip` target does not require wine
-the way an NSIS installer would, but `rcedit` — which stamps the icon and version onto
-the `.exe` — does want wine on macOS. **Open item to resolve during implementation:**
-confirm whether `wine-stable` is needed; if so, document `brew install --cask
-wine-stable`, and fall back to building the Windows zip on a Windows machine with the
-same script if wine proves unreliable.
+**Both targets are built on macOS. Wine is not required — verified empirically, not
+assumed.**
+
+On a machine with no wine installed (`which wine` → not found), electron-builder
+26.15.3 produced a Windows x64 `zip` from macOS with exit code 0, including a custom
+`.ico`: the packaged `.exe` grew by 75,776 bytes versus an iconless build, and the
+icon's image bytes were located inside the executable. electron-builder patches the
+Windows executable natively rather than shelling out to `rcedit` under wine.
+
+The wine requirement documented upstream applies to **NSIS installer generation**,
+which this project does not use. Should an installer target ever be added, wine
+becomes necessary again.
 
 ## Testing
 
