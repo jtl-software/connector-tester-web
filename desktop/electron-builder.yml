@@ -23,20 +23,36 @@ extraResources:
     to: composer.json
   - from: router.php
     to: router.php
-  - from: php/${platform}-${arch}
-    to: php/${platform}-${arch}
 
+# The bundled PHP binary is platform- AND arch-specific (see php/<triple>/).
+# `${platform}` in a top-level `extraResources` entry expands to the *build*
+# machine's platform, not the target's — since both mac and win builds run on
+# a Mac, `npm run build:win` used to copy the macOS binary into the Windows
+# package (php/darwin-x64 -> php/darwin-x64), and the packaged app looked for
+# php/win32-x64/php.exe at runtime and found nothing. electron-builder merges
+# platform-specific `extraResources` additively with the top-level list
+# (app-builder-lib/out/fileMatcher.js: getFileMatchers calls addPatterns for
+# both `config[name]` and the per-platform `customBuildOptions[name]`), so
+# declaring the PHP resource only under `mac:`/`win:` — where `${platform}` is
+# resolved against that target, not the host — gives each package the correct
+# binary regardless of which OS actually runs electron-builder.
 mac:
   target:
     - target: zip
       arch: [arm64, x64]
   category: public.app-category.developer-tools
   icon: build/icon.icns
+  extraResources:
+    - from: php/darwin-${arch}
+      to: php/darwin-${arch}
 
 win:
   target:
     - target: zip
       arch: [x64]
   icon: build/icon.ico
+  extraResources:
+    - from: php/win32-${arch}
+      to: php/win32-${arch}
 
 artifactName: JTL-Connector-Tester-${version}-${os}-${arch}.${ext}
