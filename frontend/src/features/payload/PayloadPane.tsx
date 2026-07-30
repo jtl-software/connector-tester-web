@@ -4,6 +4,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { useTriggerAction } from '@/features/request/useTriggerAction'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
 import { PaneHeader } from '@/components/PaneHeader'
+import { newId } from '@/lib/id'
 
 export function PayloadPane() {
   const { payload, setPayload, connected, result } = useAppStore()
@@ -46,7 +47,7 @@ export function PayloadPane() {
               s.setPayloads([
                 ...s.payloads.filter((p) => p.name !== name.trim()),
                 {
-                  id: crypto.randomUUID(),
+                  id: newId(),
                   name: name.trim(),
                   controller: s.controller,
                   body: s.payload,

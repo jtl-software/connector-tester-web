@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { renderHook, waitFor, act } from '@testing-library/react'
 import { useTriggerAction } from './useTriggerAction'
 import { useAppStore } from '@/store/useAppStore'
-import { clearHistory } from '@/storage/history'
+import { clearHistory, loadHistory } from '@/storage/history'
 import * as api from '@/api/client'
 
 beforeEach(async () => {
@@ -109,5 +109,40 @@ describe('useTriggerAction — a failed history write surfaces instead of vanish
     await waitFor(() => {
       expect(useAppStore.getState().historyError).toBeNull()
     })
+  })
+})
+
+describe('useTriggerAction — history ids survive an insecure context (crypto.randomUUID missing)', () => {
+  afterEach(() => {
+    // @ts-expect-error -- restore access to the real Crypto.prototype.randomUUID
+    delete crypto.randomUUID
+  })
+
+  it('still records history successfully when crypto.randomUUID is undefined', async () => {
+    // `randomUUID` lives on `Crypto.prototype`; shadow it with an own
+    // property set to `undefined` to simulate the insecure-context browser
+    // tab where it doesn't exist (see frontend/src/lib/id.test.ts for why
+    // `delete` alone doesn't do this).
+    Object.defineProperty(crypto, 'randomUUID', { value: undefined, configurable: true })
+    expect(typeof crypto.randomUUID).toBe('undefined')
+
+    vi.spyOn(api, 'callAction').mockResolvedValue({
+      ok: true, httpStatus: 200, durationMs: 5, data: { some: 'pulled data' }
+    })
+
+    const { result } = renderHook(() => useTriggerAction())
+
+    // This must not throw / reject — that's exactly the shipped bug.
+    await act(async () => {
+      await result.current.trigger()
+    })
+
+    await waitFor(() => {
+      expect(useAppStore.getState().historyError).toBeNull()
+    })
+
+    const history = await loadHistory()
+    expect(history).toHaveLength(1)
+    expect(history[0].id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
   })
 })
