@@ -6,6 +6,15 @@ directories:
   output: dist
   buildResources: build
 
+# Fails the build if the packaged output for this target is missing its
+# php/<triple>/ binary, or has the wrong binary format for the target
+# (mac -> Mach-O, win -> PE32+). electron-builder's own copyFiles step only
+# warns on a missing extraResources source, so without this hook a package
+# with no PHP runtime at all ships to users undetected — the same failure
+# class as C1 (round 1: a Windows build shipped with the macOS PHP binary).
+# See scripts/verify-php-bundle.js.
+afterPack: ./scripts/verify-php-bundle.js
+
 files:
   - main.js
   - preload.js
