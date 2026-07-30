@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@jtl-software/platform-ui-react": "^1.56.1",
+    "@monaco-editor/react": "^4.7.0",
     "axios": "^1.7.0",
     "monaco-editor": "^0.52.0",
     "react": "^19.0.0",
