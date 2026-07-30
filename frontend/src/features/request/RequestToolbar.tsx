@@ -2,6 +2,8 @@ import { Button, Select } from '@jtl-software/platform-ui-react'
 import { ACTIONS, CONTROLLERS, CONTROLLER_LABELS, type Action, type ControllerName } from '@/types/domain'
 import { useAppStore } from '@/store/useAppStore'
 import { useTriggerAction } from './useTriggerAction'
+import { DevMenu } from './DevMenu'
+import { LinkingsMenu } from './LinkingsMenu'
 
 export function RequestToolbar() {
   const { controller, action, limit, connected, setController, setAction, setLimit } = useAppStore()
@@ -42,7 +44,9 @@ export function RequestToolbar() {
         />
       </label>
 
-      <div style={{ marginLeft: 'auto' }}>
+      <div style={{ marginLeft: 'auto', display: 'flex', gap: 6, position: 'relative' }}>
+        <DevMenu />
+        <LinkingsMenu />
         <Button
           label="Trigger Action"
           variant="default"
