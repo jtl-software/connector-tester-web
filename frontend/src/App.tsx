@@ -2,6 +2,9 @@ import { useEffect } from 'react'
 import { ThemeSwitcher, ThemeProvider } from '@jtl-software/platform-ui-react'
 import { useAppStore } from '@/store/useAppStore'
 import { ConnectionPanel } from '@/features/connection/ConnectionPanel'
+import { RequestToolbar } from '@/features/request/RequestToolbar'
+import { PayloadPane } from '@/features/payload/PayloadPane'
+import { ResponsePane } from '@/features/response/ResponsePane'
 
 export default function App() {
   const init = useAppStore((s) => s.init)
@@ -24,8 +27,12 @@ export default function App() {
           </div>
         </aside>
 
-        <main style={{ flex: 1, minWidth: 0, padding: 16 }}>
-          <p style={{ opacity: 0.6 }}>Request workspace — added in Task 6.</p>
+        <main style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          <RequestToolbar />
+          <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
+            <PayloadPane />
+            <ResponsePane />
+          </div>
         </main>
       </div>
     </ThemeProvider>
