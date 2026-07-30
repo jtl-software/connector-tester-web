@@ -30,7 +30,17 @@ class Kernel
                 'true'
             );
         });
-        $app->addErrorMiddleware(true, true, true);
+        // displayErrorDetails=true, logErrors=true, logErrorDetails=false:
+        // errors are still shown to the caller and still logged, but Slim no
+        // longer writes the full exception trace — including bound
+        // constructor arguments such as the connector token on
+        // AuthController — to stderr. That stderr is teed verbatim into
+        // data/logs/php.log and surfaced in crash dialogs, and data/ is
+        // documented as portable (carried on a USB stick), so the trace
+        // detail is the actual leak; desktop/main.js's redactSecrets() is a
+        // narrower belt-and-braces backstop on top of this, not a
+        // replacement for it.
+        $app->addErrorMiddleware(true, true, false);
 
         $this->registerRoutes($app);
 
