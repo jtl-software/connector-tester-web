@@ -1,0 +1,18 @@
+/*
+ * Background for lines Monaco highlights as filter matches (applied via
+ * editor.createDecorationsCollection in ResponseEditor.tsx). Monaco
+ * decorations need a real CSS class to reference — inline styles aren't an
+ * option — so this lives in its own stylesheet instead of alongside the rest
+ * of the app's inline-styled components.
+ *
+ * `isWholeLine` decorations render as a background layer behind the text
+ * (view-overlays), not on top of it, so the JSON syntax-highlighted tokens
+ * stay fully visible through the tint in both themes.
+ *
+ * --base-warning-background is theme-aware: opaque pale amber in light mode,
+ * translucent amber in dark mode (see @jtl-software/platform-ui-react/dist/index.css),
+ * so this needs no separate dark-mode override.
+ */
+.response-match-highlight {
+  background: var(--base-warning-background);
+}

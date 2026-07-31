@@ -79,7 +79,7 @@ export function PayloadPane() {
       <footer style={{ padding: '4px 10px', fontSize: 10, opacity: 0.6, borderTop: '1px solid rgba(128,128,128,.22)' }}>
         {payload.trim()
           ? valid
-            ? `Payload: valid JSON · ${payload.split('\n').length} lines`
+            ? `Payload: valid JSON · ${payload.split('\n').length} ${payload.split('\n').length === 1 ? 'line' : 'lines'}`
             : 'Payload: invalid JSON'
           : 'Payload: empty'}
       </footer>

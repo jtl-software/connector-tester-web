@@ -1,11 +1,10 @@
 import { useMemo, useState } from 'react'
-import { CodeEditor } from '@jtl-software/platform-ui-react/components/code-editor'
 import { useAppStore } from '@/store/useAppStore'
 import { useContainerHeight } from '@/hooks/useContainerHeight'
 import { PaneHeader } from '@/components/PaneHeader'
 import { MAX_RESPONSE_BYTES } from '@/storage/history'
-import { filterResponse, type FilterResult } from '@/lib/responseFilter'
-import { FilteredResponseView } from './FilteredResponseView'
+import { filterResponse, type EntityMatch, type FilterResult } from '@/lib/responseFilter'
+import { ResponseEditor } from './ResponseEditor'
 
 function countItems(data: unknown): string {
   if (Array.isArray(data)) return `${data.length} items`
@@ -16,6 +15,49 @@ function countItems(data: unknown): string {
   return ''
 }
 
+interface EditorView {
+  value: string
+  language: string
+  highlightLines: number[]
+}
+
+/**
+ * Renders matched entities as a single, syntax-highlightable JSON array
+ * (`[ entity, entity, ... ]`) instead of the disconnected fragments a naive
+ * "matching lines only" filter would show — this is what gives "the WHOLE
+ * matching entity" per the entity-list contract in responseFilter.ts, while
+ * still being one valid JSON document Monaco can colourise normally.
+ *
+ * Each entity's own `JSON.stringify(entity, null, 2)` text is re-indented by
+ * two spaces to nest visually under the wrapping array; matchedLines
+ * (0-based, local to that entity's text) are converted to absolute 1-based
+ * Monaco line numbers for the returned `highlightLines`.
+ */
+function buildEntitiesView(matches: EntityMatch[]): EditorView {
+  if (matches.length === 0) {
+    return { value: 'No entities matched.', language: 'plaintext', highlightLines: [] }
+  }
+
+  const bodyLines: string[] = ['[']
+  const highlightLines: number[] = []
+  let offset = 1 // 0-based line index (within bodyLines) where the current entity's text starts
+
+  matches.forEach((match, entityIndex) => {
+    const lines = match.text.split('\n').map((line) => `  ${line}`)
+    if (entityIndex < matches.length - 1) lines[lines.length - 1] += ','
+
+    for (const localLine of match.matchedLines) {
+      highlightLines.push(offset + localLine + 1) // +1: 0-based -> Monaco's 1-based line numbers
+    }
+
+    bodyLines.push(...lines)
+    offset += lines.length
+  })
+
+  bodyLines.push(']')
+  return { value: bodyLines.join('\n'), language: 'json', highlightLines }
+}
+
 export function ResponsePane() {
   const result = useAppStore((s) => s.result)
   const [filter, setFilter] = useState('')
@@ -24,11 +66,24 @@ export function ResponsePane() {
   const text = result ? JSON.stringify(result.data, null, 2) : ''
 
   // Only computed while a filter is active — with no filter the pane behaves
-  // exactly as before (plain <CodeEditor> showing the full response).
+  // exactly as before (full response, no highlights).
   const filterResult: FilterResult | null = useMemo(() => {
     if (!result || !filter) return null
     return filterResponse(result.data, filter)
   }, [result, filter])
+
+  // Single source of truth for what the (single, shared) editor instance
+  // renders, whether or not a filter is active — see ResponseEditor.tsx for
+  // why this replaced the old CodeEditor/FilteredResponseView split.
+  const view: EditorView = useMemo(() => {
+    if (!filterResult) return { value: text, language: 'json', highlightLines: [] }
+
+    if (filterResult.kind === 'lines') {
+      return { value: filterResult.text, language: 'plaintext', highlightLines: [] }
+    }
+
+    return buildEntitiesView(filterResult.matches)
+  }, [filterResult, text])
 
   return (
     <section style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
@@ -66,11 +121,12 @@ export function ResponsePane() {
       </PaneHeader>
 
       <div ref={editorWrapRef} style={{ flex: 1, minHeight: 0 }}>
-        {filterResult ? (
-          <FilteredResponseView result={filterResult} height={editorHeight} />
-        ) : (
-          <CodeEditor value={text} defaultLanguage="json" height={editorHeight} readOnly />
-        )}
+        <ResponseEditor
+          value={view.value}
+          language={view.language}
+          height={editorHeight}
+          highlightLines={view.highlightLines}
+        />
       </div>
 
       <footer style={{ padding: '4px 10px', fontSize: 10, opacity: 0.6, borderTop: '1px solid rgba(128,128,128,.22)' }}>
